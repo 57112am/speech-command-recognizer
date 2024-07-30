@@ -1,11 +1,12 @@
 import React from 'react'
-import AudioRecorder from './components/AudioRecorder'
+import { Routes, Route } from 'react-router-dom';
+import Home from './pages/Home';
 
 const App = () => {
   return (
-    <div>
-      <AudioRecorder />
-    </div>
+    <Routes>
+      <Route path='/' element={<Home />} />
+    </Routes>
   )
 }
 
