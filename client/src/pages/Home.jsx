@@ -4,6 +4,7 @@ import Spinner from "../components/Spinner";
 import { Link } from "react-router-dom";
 import Header from "../components/Header";
 import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
 
 const Home = () => {
   const [loading, setLoading] = useState(false);
@@ -12,7 +13,7 @@ const Home = () => {
     <div>
         {loading && <Spinner />}
         <Header />
-        {/* <Navbar /> */}
+        {/* <Footer /> */}
     </div>
   );
 };

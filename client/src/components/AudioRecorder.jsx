@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-
+import { useSnackbar } from "notistack";
 // Import dependencies
 import * as tf from "@tensorflow/tfjs";
 import * as speech from "@tensorflow-models/speech-commands";
@@ -10,14 +10,16 @@ const AudioRecorder = () => {
   const [labels, setLabels] = useState([]);
   const [isListening, setIsListening] = useState(false); // Track streaming status
   const [currentWord, setCurrentWord] = useState(null); // Track currently recognized word
+  const { enqueueSnackbar } = useSnackbar();
 
   // Create Recognizer
   const loadModel = async () => {
     const recognizer = await speech.create("BROWSER_FFT");
     console.log("Model Loaded");
     await recognizer.ensureModelLoaded();
+    enqueueSnackbar("Model loaded successfully", {variant: 'success'});
     const wordLabels = recognizer.wordLabels();
-    console.log(wordLabels);
+    // console.log(wordLabels);
     setModel(recognizer);
     setLabels(wordLabels);
   };
@@ -87,10 +89,10 @@ const AudioRecorder = () => {
             {labels.map((label, index) => (
               <div
                 key={index}
-                className={`p-4 rounded text-center ${
+                className={`p-4 rounded text-black font-bold text-center ${
                   currentWord === label
                     ? "bg-yellow-300 animate-blink"
-                    : "bg-gray-100 hover:bg-gray-200"
+                    : "bg-gray-300 hover:bg-gray-100"
                 }`}
               >
                 {label}
