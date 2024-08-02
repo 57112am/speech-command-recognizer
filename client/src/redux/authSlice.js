@@ -1,10 +1,21 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
+// Retrieve user information from localStorage
+const loadUserFromLocalStorage = () => {
+  const userInfo = localStorage.getItem("userInfo");
+  if (userInfo) {
+    return JSON.parse(userInfo);
+  }
+  return {
+    _id: '',
+    fullName: '',
+    email: '',
+    token: '',
+  };
+};
+
 const initialState = {
-  _id: '',
-  fullName: '',
-  email: '',
-  token: '',
+  ...loadUserFromLocalStorage(),
   status: 'idle', // can be 'idle', 'loading', 'succeeded', 'failed'
   error: null,
 };
@@ -33,9 +44,7 @@ export const login = createAsyncThunk('auth/login', async (userData) => {
     throw new Error('Failed to log in');
   }
   const data = await response.json();
-  console.log(data);
   localStorage.setItem("userInfo", JSON.stringify(data));
-  
   return data;
 });
 
@@ -61,6 +70,7 @@ const authSlice = createSlice({
       state.token = '';
       state.status = 'idle';
       state.error = null;
+      localStorage.removeItem("userInfo");
     },
   },
   extraReducers: (builder) => {
