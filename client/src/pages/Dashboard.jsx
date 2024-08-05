@@ -1,12 +1,17 @@
 import React, { useState } from 'react';
+import { useSelector } from "react-redux";
 import AudioRecorder from '../components/AudioRecorder';
 import LoggedInNavbar from '../components/LoggedInNavbar';
+import SingleWord from '../components/SingleWord';
 import Sidebar from '../components/Sidebar';
 import { FaChevronRight, FaChevronLeft } from 'react-icons/fa'; // Import icons
 
 const Dashboard = () => {
   const [isSidebarOpen, setSidebarOpen] = useState(true);
-
+  const [words, setWords] = useState([]);
+  const [title, setTitle] = useState("");
+  const obj = useSelector(state => state.auth);
+  console.log(obj)
   const toggleSidebar = () => {
     setSidebarOpen(!isSidebarOpen);
   };
@@ -14,14 +19,14 @@ const Dashboard = () => {
   return (
     <div className="flex h-screen">
       {/* Sidebar */}
-      <Sidebar isOpen={isSidebarOpen} />
+      <Sidebar isOpen={isSidebarOpen} setTitle={setTitle} setWords={setWords} />
 
       {/* Main content area */}
       <div className={`flex-1 transition-all duration-300 ${isSidebarOpen ? 'ml-64' : 'ml-16'}`}>
         <LoggedInNavbar />
         
         <div className="p-6 flex flex-col flex-1">
-          <AudioRecorder />
+          {words.length > 0 ? <SingleWord words={words} title={title} setWords={setWords} /> : <AudioRecorder />}
         </div>
       </div>
 

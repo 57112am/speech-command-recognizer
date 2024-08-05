@@ -54,12 +54,12 @@ export const logout = createAsyncThunk('auth/logout', async () => {
   const response = await fetch('http://localhost:8000/api/auth/logout', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    credentials: 'include'
   });
-
+  
   if (!response.ok) {
     throw new Error('Failed to log out');
   }
+  localStorage.removeItem("userInfo");
 });
 
 const authSlice = createSlice({

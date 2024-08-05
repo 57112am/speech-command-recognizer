@@ -106,3 +106,20 @@ export const updatePinStatus = async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 }
+
+// Example endpoint in your Express server
+export const updateTitle =  async (req, res) => {
+  const { id } = req.params;
+  const { title } = req.body;
+
+  try {
+    // Find and update the word's title in the database
+    const updatedWord = await DetectedWords.findByIdAndUpdate(id, { title }, { new: true });
+    if (!updatedWord) {
+      return res.status(404).json({ message: "Word not found" });
+    }
+    res.json(updatedWord);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+}

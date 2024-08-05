@@ -1,5 +1,5 @@
 import React from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { logout } from "../redux/authSlice";
 import { useSnackbar } from "notistack";
@@ -8,6 +8,7 @@ const LoggedInNavbar = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
+  const user = useSelector((state) => state.auth);
 
   const handleLogout = async () => {
     try {
@@ -57,6 +58,11 @@ const LoggedInNavbar = () => {
             tabIndex={0}
             className="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow"
           >
+            <li className="text-center text-xl">
+              <span className="text-center">
+                Hi, {user.fullName}
+              </span>
+            </li>
             <li>
               <a className="justify-between">
                 Profile

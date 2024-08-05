@@ -58,6 +58,33 @@ export const sendRecognizedWords = createAsyncThunk(
   }
 );
 
+// Thunk to update a word's title
+export const updateWordTitle = createAsyncThunk(
+  "words/updateWordTitle",
+  async ({ id, title }, { rejectWithValue }) => {
+    try {
+      const response = await fetch(
+        `http://localhost:8000/api/words/updateWordTitle/${id}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ title }),
+          credentials: "include",
+        }
+      );
+      const updatedWord = await response.json();
+      if (!response.ok) {
+        throw new Error("Failed to update word title");
+      }
+      return updatedWord;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
 // Thunk to delete a word
 export const deleteWord = createAsyncThunk(
   "words/deleteWord",
@@ -161,6 +188,20 @@ const wordsSlice = createSlice({
         if (index !== -1) {
           state.detectedWords[index] = action.payload;
         }
+      })
+      .addCase(updateWordTitle.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(updateWordTitle.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        const index = state.detectedWords.findIndex(word => word._id === action.payload._id);
+        if (index !== -1) {
+          state.detectedWords[index] = action.payload;
+        }
+      })
+      .addCase(updateWordTitle.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload;
       });
   },
 });

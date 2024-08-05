@@ -8,7 +8,11 @@ const detectedWordsSchema = new mongoose.Schema({
     isPinned: {
         type: Boolean,
         default: false // or whatever default value you prefer
-    }
+    },
+    title: {
+        type: String,
+        default: ""
+    },
 }, {
     timestamps: true
 });
