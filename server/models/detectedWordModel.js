@@ -4,6 +4,10 @@ const detectedWordsSchema = new mongoose.Schema({
     words: {
         type: [String],
         required: true
+    },
+    isPinned: {
+        type: Boolean,
+        default: false // or whatever default value you prefer
     }
 }, {
     timestamps: true

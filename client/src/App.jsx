@@ -20,8 +20,12 @@ const App = () => {
         <Route path="/" element={<Home />} />
         <Route
           path="/dashboard"
-          element={obj._id ? <Dashboard /> : <Navigate to='/' />}
+          element={obj._id ? <Dashboard /> : <Navigate to="/" />}
         />
+        {/* <Route
+          path="/details/:id"
+          element={obj._id ? <WordDetail /> : <Navigate to="/" />}
+        /> */}
       </Routes>
     </Router>
   );

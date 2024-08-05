@@ -25,6 +25,7 @@ export const signup = createAsyncThunk('auth/signup', async (userData) => {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(userData),
+    credentials: 'include'
   });
   if (!response.ok) {
     throw new Error('Failed to sign up');
@@ -39,6 +40,7 @@ export const login = createAsyncThunk('auth/login', async (userData) => {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(userData),
+    credentials: 'include'
   });
   if (!response.ok) {
     throw new Error('Failed to log in');
@@ -52,6 +54,7 @@ export const logout = createAsyncThunk('auth/logout', async () => {
   const response = await fetch('http://localhost:8000/api/auth/logout', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
+    credentials: 'include'
   });
 
   if (!response.ok) {

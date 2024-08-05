@@ -5,7 +5,7 @@ import Sidebar from '../components/Sidebar';
 import { FaChevronRight, FaChevronLeft } from 'react-icons/fa'; // Import icons
 
 const Dashboard = () => {
-  const [isSidebarOpen, setSidebarOpen] = useState(false);
+  const [isSidebarOpen, setSidebarOpen] = useState(true);
 
   const toggleSidebar = () => {
     setSidebarOpen(!isSidebarOpen);
