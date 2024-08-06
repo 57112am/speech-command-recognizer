@@ -22,11 +22,12 @@ const Sidebar = ({ isOpen, setTitle, setWords }) => {
   const modalRef = useRef(null);
   // console.log(detectedWords);
   const obj = useSelector(state => state.auth);
+  // console.log(obj);
   useEffect(() => {
-    if (status === "idle") {
+    if (obj._id) {
       dispatch(fetchAllDetectedWords());
     }
-  }, [dispatch, status, obj]);
+  },[obj]);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
