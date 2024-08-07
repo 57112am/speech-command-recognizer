@@ -1,8 +1,6 @@
 import { useEffect, useRef } from 'react';
 
-const useClickOutside = (callback) => {
-  const ref = useRef(null);
-
+const useClickOutside = (callback, ref) => {
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (ref.current && !ref.current.contains(event.target)) {
@@ -14,7 +12,7 @@ const useClickOutside = (callback) => {
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [callback]);
+  }, [callback, ref]);
 
   return ref;
 };
