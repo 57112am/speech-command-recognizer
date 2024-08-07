@@ -69,7 +69,7 @@ const Register = ({ toggle }) => {
         &lt; Back to Home
       </button>
       <h1 className="text-3xl font-bold text-center text-gray-700 mb-4">
-        Register
+        Register Yourself
       </h1>
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>

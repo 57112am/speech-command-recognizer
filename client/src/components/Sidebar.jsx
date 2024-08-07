@@ -10,7 +10,7 @@ import { MdLabelImportantOutline } from "react-icons/md";
 import { FiTrash, FiEdit } from "react-icons/fi";
 import { BsThreeDots } from "react-icons/bs";
 
-const Sidebar = ({ isOpen, setTitle, setWords }) => {
+const Sidebar = ({ isOpen, setTitle, setWords, onWordSelect }) => {
   const dispatch = useDispatch();
   const detectedWords = useSelector((state) => state.words.detectedWords);
   const status = useSelector((state) => state.words.status);
@@ -98,8 +98,7 @@ const Sidebar = ({ isOpen, setTitle, setWords }) => {
   };
 
   const handleWordItem = (title, words) => {
-    setTitle(title || "");
-    setWords(words);
+    onWordSelect(title, words); // Notify Dashboard to handle word selection
   };
 
   const handleMenuToggle = (id) => {
