@@ -96,7 +96,7 @@ const AudioRecorder = () => {
         </div>
         <div className="w-full max-w-3xl mx-auto p-4 bg-white rounded shadow">
           <h2 className="text-xl font-bold mb-2">Recognized Words</h2>
-          <div className="grid grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {labels.map((label, index) => (
               <div
                 key={index}

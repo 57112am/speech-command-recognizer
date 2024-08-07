@@ -10,7 +10,7 @@ const Dashboard = () => {
   const [isSidebarOpen, setSidebarOpen] = useState(true);
   const [words, setWords] = useState([]);
   const [title, setTitle] = useState("");
-  const obj = useSelector(state => state.auth);
+  // const obj = useSelector(state => state.auth);
   // console.log(obj)
   const toggleSidebar = () => {
     setSidebarOpen(!isSidebarOpen);

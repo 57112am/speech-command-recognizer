@@ -17,17 +17,17 @@ const Sidebar = ({ isOpen, setTitle, setWords }) => {
   const [showMore, setShowMore] = useState({});
   const [openMenuIndex, setOpenMenuIndex] = useState(null);
   const [editingWord, setEditingWord] = useState(null);
-  const [newTitle, setNewTitle] = useState(""); // Added newTitle state
+  const [newTitle, setNewTitle] = useState("");
   const menuRef = useRef(null);
   const modalRef = useRef(null);
-  // console.log(detectedWords);
-  const obj = useSelector(state => state.auth);
-  // console.log(obj);
+
+  const obj = useSelector((state) => state.auth);
+
   useEffect(() => {
     if (obj._id) {
       dispatch(fetchAllDetectedWords());
     }
-  },[obj]);
+  }, [obj]);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -86,18 +86,19 @@ const Sidebar = ({ isOpen, setTitle, setWords }) => {
 
   const handleEdit = (word) => {
     setEditingWord(word);
-    setNewTitle(word.title || word.words.join(", ")); // Set newTitle for editing
+    setNewTitle(word.title || word.words.join(", "));
   };
 
   const handleSaveEdit = () => {
     if (newTitle.trim()) {
       dispatch(updateWordTitle({ id: editingWord._id, title: newTitle }));
-      setTitle(newTitle); // Update title state
+      setTitle(newTitle);
       setEditingWord(null);
     }
   };
 
-  const handleWordItem = (words) => {
+  const handleWordItem = (title, words) => {
+    setTitle(title || "");
     setWords(words);
   };
 
@@ -133,14 +134,14 @@ const Sidebar = ({ isOpen, setTitle, setWords }) => {
             <h2 className="text-lg text-center mt-2 font-bold">Pinned</h2>
             <ul>
               {pinnedWords.map((word, idx) => {
-                const id = `pinned-${idx}`;
+                const id = `pinned-${word._id}`; // Use word._id for uniqueness
                 return (
                   <li
                     key={id}
                     className="mb-2 flex items-center justify-between relative"
                   >
                     <span
-                      onClick={() => handleWordItem(word.words)}
+                      onClick={() => handleWordItem(word.title, word.words)}
                       className="hover:cursor-pointer"
                     >
                       {word.title === ""
@@ -199,14 +200,14 @@ const Sidebar = ({ isOpen, setTitle, setWords }) => {
                   ? groupedWords[date]
                   : groupedWords[date].slice(0, 5)
                 ).map((word, idx) => {
-                  const id = `unpinned-${idx}`;
+                  const id = `unpinned-${date}-${word._id}`; // Use word._id and date for uniqueness
                   return (
                     <li
                       key={id}
                       className="mb-2 flex items-center justify-between relative"
                     >
                       <span
-                        onClick={() => handleWordItem(word.words)}
+                        onClick={() => handleWordItem(word.title, word.words)}
                         className="hover:cursor-pointer"
                       >
                         {word.title === ""
@@ -266,10 +267,10 @@ const Sidebar = ({ isOpen, setTitle, setWords }) => {
 
       {/* Edit Modal */}
       {editingWord && (
-        <div className="fixed inset-0 w-screen flex items-center justify-center bg-gray-800 bg-opacity-75 z-50">
+        <div className="fixed inset-0 w-screen flex items-start justify-center bg-gray-800 bg-opacity-75 z-50">
           <div
             ref={modalRef}
-            className="bg-gray-900 p-8 rounded-lg shadow-lg w-3/4 max-w-4xl"
+            className="bg-gray-900 p-8 rounded-lg mt-20 shadow-lg w-2/4 max-w-4xl"
           >
             <h3 className="text-lg font-bold text-center">Edit Title</h3>
             <input

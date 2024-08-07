@@ -10,10 +10,11 @@ const Home = () => {
   const [loading, setLoading] = useState(false);
 
   return (
-    <div>
-        {loading && <Spinner />}
-        <Header />
-        {/* <Footer /> */}
+    <div className="h-screen">
+      {loading && <Spinner />}
+      <Header />
+      <div className=" w-full bg-contain h-1/2 "> <img  className=" w-full  h-[87.5vh] " src="https://cxscoop.com/wp-content/webp-express/webp-images/uploads/2022/11/7-Use-Cases-for-Speech-Analytics-1440x1072.jpg.webp" alt="" /> </div>
+      {/* <Footer /> */}
     </div>
   );
 };
