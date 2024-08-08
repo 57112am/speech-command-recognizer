@@ -21,10 +21,15 @@ const Home = () => {
           <p className="text-lg text-white mb-8">
             Our Model enables effortless medical workflows via Automatic Speech Recognition & Natural Language Processing.
           </p>
-          <div>
-            <Link to="/auth">
+          <div className="flex space-x-4">
+            <Link to="/auth?type=login">
               <button className="bg-blue-500 text-white text-lg font-semibold px-6 py-3 rounded-lg shadow-lg hover:bg-blue-600 transition duration-300">
                 Login
+              </button>
+            </Link>
+            <Link to="/auth?type=register">
+              <button className="bg-green-500 text-white text-lg font-semibold px-6 py-3 rounded-lg shadow-lg hover:bg-green-600 transition duration-300">
+                Register
               </button>
             </Link>
           </div>

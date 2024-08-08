@@ -5,6 +5,7 @@ import authRoutes from './routes/authRoutes.js';
 import wordRoutes from './routes/wordRoutes.js';
 import connectToMongodb from './db/connectToMongodb.js';
 import cors from 'cors';
+import setupSwagger from './swagger.js';
 
 const app = express();
 dotenv.config();
@@ -12,11 +13,13 @@ dotenv.config();
 const port = process.env.PORT || 8000;
 
 app.use(cors({
-    origin: 'http://localhost:5173', // Your frontend's URL
-    credentials: true, // Allow cookies to be sent
+    origin: 'http://localhost:5173', // frontend URL
+    credentials: true, // for sending cookies
   }));
 app.use(express.json());
 app.use(cookieParser());
+
+setupSwagger(app);
 
 app.use('/api/auth', authRoutes);
 app.use('/api/words', wordRoutes);

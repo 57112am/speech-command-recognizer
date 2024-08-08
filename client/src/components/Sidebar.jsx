@@ -97,8 +97,8 @@ const Sidebar = ({ isOpen, setTitle, setWords, onWordSelect }) => {
     }
   };
 
-  const handleWordItem = (title, words) => {
-    onWordSelect(title, words); // Notify Dashboard to handle word selection
+  const handleWordItem = (title, words, date) => {
+    onWordSelect(title, words, date); // Notify Dashboard to handle word selection
   };
 
   const handleMenuToggle = (id) => {
@@ -140,7 +140,7 @@ const Sidebar = ({ isOpen, setTitle, setWords, onWordSelect }) => {
                     className="mb-2 flex items-center justify-between relative"
                   >
                     <span
-                      onClick={() => handleWordItem(word.title, word.words)}
+                      onClick={() => handleWordItem(word.title, word.words, word.createdAt)}
                       className="hover:cursor-pointer"
                     >
                       {word.title === ""
@@ -206,7 +206,7 @@ const Sidebar = ({ isOpen, setTitle, setWords, onWordSelect }) => {
                       className="mb-2 flex items-center justify-between relative"
                     >
                       <span
-                        onClick={() => handleWordItem(word.title, word.words)}
+                        onClick={() => handleWordItem(word.title, word.words, word.createdAt)}
                         className="hover:cursor-pointer"
                       >
                         {word.title === ""

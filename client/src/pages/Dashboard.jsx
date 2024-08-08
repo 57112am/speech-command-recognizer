@@ -10,6 +10,7 @@ const Dashboard = () => {
   const [isSidebarOpen, setSidebarOpen] = useState(false); // Sidebar initially closed on small screens
   const [words, setWords] = useState([]);
   const [title, setTitle] = useState("");
+  const [date, setDate] = useState("");
 
   // Detect screen size changes
   const handleResize = () => {
@@ -30,9 +31,10 @@ const Dashboard = () => {
     setSidebarOpen(!isSidebarOpen);
   };
 
-  const handleWordSelect = (title, words) => {
+  const handleWordSelect = (title, words, date) => {
     setTitle(title);
     setWords(words);
+    setDate(date);
     if (window.innerWidth < 768) {
       setSidebarOpen(false); // Close the sidebar on small screens
     }
@@ -54,7 +56,7 @@ const Dashboard = () => {
         
         <div className="p-6 flex flex-col flex-1">
           {words.length > 0 ? (
-            <SingleWord words={words} title={title} setWords={setWords} />
+            <SingleWord words={words} title={title} setWords={setWords} date={date} />
           ) : (
             <AudioRecorder />
           )}

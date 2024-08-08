@@ -13,6 +13,8 @@ const AudioRecorder = () => {
   const dispatch = useDispatch();
   const { recognizedWords, status } = useSelector((state) => state.words);
   const { enqueueSnackbar } = useSnackbar();
+  const audioContext = new AudioContext({sampleRate: 44100});
+  console.log("audiocontext sample rate: ",audioContext.sampleRate);
 
   const loadModel = async () => {
     const recognizer = await speech.create('BROWSER_FFT');
@@ -24,7 +26,22 @@ const AudioRecorder = () => {
     setLabels(wordLabels);
   };
 
-  useEffect(() => {
+
+async function testAudioContext() {
+  try {
+    const oscillator = audioContext.createOscillator();
+    oscillator.connect(audioContext.destination);
+    oscillator.start();
+    await new Promise(resolve => setTimeout(resolve, 1000)); // Play for 1 second
+    oscillator.stop();
+    console.log('AudioContext test passed');
+  } catch (error) {
+    console.error('AudioContext test failed:', error);
+  }
+}
+
+useEffect(() => {
+    testAudioContext();
     loadModel();
   }, []);
 

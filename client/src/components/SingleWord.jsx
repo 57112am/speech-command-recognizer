@@ -1,6 +1,6 @@
 import React from 'react';
 
-const SingleWord = ({ words, title, setWords }) => {
+const SingleWord = ({ words, title, setWords, date }) => {
   const handleBackClick = () => {
     setWords([]); // Reset the words array
   };
@@ -9,6 +9,7 @@ const SingleWord = ({ words, title, setWords }) => {
     <div className="p-4 bg-white shadow-md rounded-lg m-10">
       <h3 className="text-xl font-bold mb-2 text-center text-gray-800">Detected Words</h3>
       {title !== ""?<h4 className="text-xl font-bold mb-2 text-center text-gray-800">{title}</h4>:""}
+      <h3 className="text-xl font-bold mb-2 text-center text-gray-800">Created At: {date.slice(0,10)}</h3>
       <div className="flex flex-wrap gap-2 mb-4">
         {words.map((word, idx) => (
           <span

@@ -1,6 +1,41 @@
 import User from "../models/userModel.js";
 import DetectedWords from "../models/detectedWordModel.js";
 
+/**
+ * @swagger
+ * tags:
+ *   name: Words
+ *   description: Operations related to detected words
+ */
+
+/**
+ * @swagger
+ * /api/words/saveWords:
+ *   post:
+ *     summary: Save a list of detected words
+ *     tags: [Words]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               words:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                 example: ["example", "test", "swagger"]
+ *     responses:
+ *       200:
+ *         description: Words saved successfully
+ *       400:
+ *         description: Invalid request data
+ *       500:
+ *         description: Internal server error
+ */
 export const saveWords = async (req, res) => {
   try {
     const user = req.user;
@@ -31,6 +66,38 @@ export const saveWords = async (req, res) => {
   }
 };
 
+/**
+ * @swagger
+ * /api/words/getAllDetectedWords:
+ *   get:
+ *     summary: Get all detected words for the user
+ *     tags: [Words]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: List of all detected words
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   _id:
+ *                     type: string
+ *                   words:
+ *                     type: array
+ *                     items:
+ *                       type: string
+ *                   createdAt:
+ *                     type: string
+ *                     format: date-time
+ *       404:
+ *         description: User not found
+ *       500:
+ *         description: Internal server error
+ */
 export const getAllDetectedWords = async (req, res) => {
   try {
     const userId = req.user._id;
@@ -52,6 +119,31 @@ export const getAllDetectedWords = async (req, res) => {
   }
 };
 
+/**
+ * @swagger
+ * /api/words/deleteAWord/{id}:
+ *   delete:
+ *     summary: Delete a detected word by ID
+ *     tags: [Words]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The ID of the word to delete
+ *     responses:
+ *       200:
+ *         description: Word deleted successfully
+ *       401:
+ *         description: Unauthorized
+ *       404:
+ *         description: Word not found
+ *       500:
+ *         description: Internal server error
+ */
 export const deleteAWord = async (req, res) => {
   try {
     const id = req.params.id;
@@ -84,6 +176,39 @@ export const deleteAWord = async (req, res) => {
   }
 };
 
+/**
+ * @swagger
+ * /api/words/updatePinStatus/{id}:
+ *   patch:
+ *     summary: Update the pin status of a word
+ *     tags: [Words]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The ID of the word to update
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               isPinned:
+ *                 type: boolean
+ *                 example: true
+ *     responses:
+ *       200:
+ *         description: Pin status updated successfully
+ *       404:
+ *         description: Word not found
+ *       500:
+ *         description: Internal server error
+ */
 export const updatePinStatus = async (req, res) => {
   try {
     const { id } = req.params;
@@ -107,7 +232,39 @@ export const updatePinStatus = async (req, res) => {
   }
 }
 
-// Example endpoint in your Express server
+/**
+ * @swagger
+ * /api/words/updateWordTitle/{id}:
+ *   patch:
+ *     summary: Update the title of a detected word
+ *     tags: [Words]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The ID of the word to update
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               title:
+ *                 type: string
+ *                 example: Updated Title
+ *     responses:
+ *       200:
+ *         description: Title updated successfully
+ *       404:
+ *         description: Word not found
+ *       500:
+ *         description: Internal server error
+ */
 export const updateTitle =  async (req, res) => {
   const { id } = req.params;
   const { title } = req.body;

@@ -1,7 +1,59 @@
 import bcrypt from 'bcryptjs';
 import User from "../models/userModel.js";
 import generateTokenAndSetCookie from '../utils/generateToken.js';
+import { verifyEmail } from '../utils/verifyEmail.js';
 
+/**
+ * @swagger
+ * tags:
+ *   name: Auth
+ *   description: Authentication related operations
+ */
+
+/**
+ * @swagger
+ * /api/auth/signup:
+ *   post:
+ *     summary: Register a new user
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               fullName:
+ *                 type: string
+ *                 example: John Doe
+ *               email:
+ *                 type: string
+ *                 example: john.doe@example.com
+ *               password:
+ *                 type: string
+ *                 example: password123
+ *               confirmPassword:
+ *                 type: string
+ *                 example: password123
+ *     responses:
+ *       201:
+ *         description: User created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 _id:
+ *                   type: string
+ *                 fullName:
+ *                   type: string
+ *                 email:
+ *                   type: string
+ *       400:
+ *         description: Bad request (e.g., passwords don't match, email invalid, etc.)
+ *       500:
+ *         description: Internal server error
+ */
 export const signup = async (req, res) => {
 	try {
         // console.log(req.body);
@@ -11,6 +63,12 @@ export const signup = async (req, res) => {
 			return res.status(400).json({ error: "Passwords don't match" });
 		}
 
+		const emailVerifiedStatus = await verifyEmail(email);
+
+		if (emailVerifiedStatus !== "valid") {
+			return res.status(400).json({error: "Email domain does not exist"});
+		}
+		
 		const user = await User.findOne({ email });
 
 		if (user) {
@@ -51,6 +109,44 @@ export const signup = async (req, res) => {
 	}
 };
 
+/**
+ * @swagger
+ * /api/auth/login:
+ *   post:
+ *     summary: Login a user
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 example: john.doe@gmail.com
+ *               password:
+ *                 type: string
+ *                 example: password123
+ *     responses:
+ *       200:
+ *         description: Successful login
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 _id:
+ *                   type: string
+ *                 fullName:
+ *                   type: string
+ *                 email:
+ *                   type: string
+ *       400:
+ *         description: Invalid username or password
+ *       500:
+ *         description: Internal server error
+ */
 export const login = async (req, res) => {
 	try {
 		const { email, password } = req.body;
@@ -74,6 +170,18 @@ export const login = async (req, res) => {
 	}
 };
 
+/**
+ * @swagger
+ * /api/auth/logout:
+ *   post:
+ *     summary: Logout a user
+ *     tags: [Auth]
+ *     responses:
+ *       200:
+ *         description: Logged out successfully
+ *       500:
+ *         description: Internal server error
+ */
 export const logout = (req, res) => {
 	try {
 		res.cookie("jwt", "", { maxAge: 0 });

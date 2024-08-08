@@ -6,7 +6,7 @@ import { useSnackbar } from "notistack";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 
-const Login = ({ toggle }) => {
+const Login = () => {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -78,9 +78,9 @@ const Login = ({ toggle }) => {
           />
         </div>
         <Link
-          to="#"
+          to="/auth?type=register"
           className="block text-sm text-center text-blue-600 hover:underline"
-          onClick={toggle}
+          
         >
           Don't have an account? Register Yourself
         </Link>
