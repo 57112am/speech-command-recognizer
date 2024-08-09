@@ -10,6 +10,19 @@ import { MdLabelImportantOutline } from "react-icons/md";
 import { FiTrash, FiEdit } from "react-icons/fi";
 import { BsThreeDots } from "react-icons/bs";
 
+/**
+ * Sidebar Component
+ * 
+ * This component renders a sidebar that lists detected words, allows for word management actions like pinning, editing, and deleting,
+ * and groups words by their detection date. It also provides a modal for editing word titles.
+ * 
+ * @param {Object} props - The props object.
+ * @param {boolean} props.isOpen - Indicates whether the sidebar is open or closed.
+ * @param {Function} props.setTitle - Function to set the title of the selected word.
+ * @param {Function} props.setWords - Function to set the words of the selected word.
+ * @param {Function} props.onWordSelect - Callback function triggered when a word is selected.
+ * @returns {JSX.Element} The Sidebar component.
+ */
 const Sidebar = ({ isOpen, setTitle, setWords, onWordSelect }) => {
   const dispatch = useDispatch();
   const detectedWords = useSelector((state) => state.words.detectedWords);
@@ -45,6 +58,12 @@ const Sidebar = ({ isOpen, setTitle, setWords, onWordSelect }) => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [menuRef, modalRef]);
 
+  /**
+   * Groups words by their detection date.
+   * 
+   * @param {Array<Object>} words - The list of detected words.
+   * @returns {Object} An object where keys are dates and values are arrays of words.
+   */
   const groupByDate = (words) => {
     return words.reduce((acc, word) => {
       const date = getRelativeDate(word.createdAt);
@@ -54,6 +73,12 @@ const Sidebar = ({ isOpen, setTitle, setWords, onWordSelect }) => {
     }, {});
   };
 
+  /**
+   * Gets a relative date string based on the given date.
+   * 
+   * @param {string} date - The date string to be converted.
+   * @returns {string} A relative date string (e.g., "Today", "Yesterday", "3 days ago").
+   */
   const getRelativeDate = (date) => {
     const today = new Date();
     const targetDate = new Date(date);
@@ -97,6 +122,13 @@ const Sidebar = ({ isOpen, setTitle, setWords, onWordSelect }) => {
     }
   };
 
+   /**
+   * Handles the selection of a word, setting the title and words in the parent component.
+   * 
+   * @param {string} title - The title of the selected word.
+   * @param {Array<string>} words - The list of words in the selected word.
+   * @param {string} date - The creation date of the selected word.
+   */
   const handleWordItem = (title, words, date) => {
     onWordSelect(title, words, date); // Notify Dashboard to handle word selection
   };
@@ -105,6 +137,12 @@ const Sidebar = ({ isOpen, setTitle, setWords, onWordSelect }) => {
     setOpenMenuIndex(openMenuIndex === id ? null : id);
   };
 
+  /**
+   * Renders a string of words with an ellipsis if the length exceeds 2 words.
+   * 
+   * @param {Array<string>} words - The list of words.
+   * @returns {string} The formatted string with ellipsis if applicable.
+   */
   const renderWordsWithEllipsis = (words) => {
     if (words.length > 2) {
       return `${words.slice(0, 2).join(", ")} ...`;

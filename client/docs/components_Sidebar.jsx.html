@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: components/Sidebar.jsx</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: components/Sidebar.jsx</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React, { useEffect, useState, useRef } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  fetchAllDetectedWords,
+  deleteWord,
+  updateWordPinStatus,
+  updateWordTitle,
+} from "../redux/wordsSlice";
+import { MdLabelImportantOutline } from "react-icons/md";
+import { FiTrash, FiEdit } from "react-icons/fi";
+import { BsThreeDots } from "react-icons/bs";
+
+/**
+ * Sidebar Component
+ * 
+ * This component renders a sidebar that lists detected words, allows for word management actions like pinning, editing, and deleting,
+ * and groups words by their detection date. It also provides a modal for editing word titles.
+ * 
+ * @param {Object} props - The props object.
+ * @param {boolean} props.isOpen - Indicates whether the sidebar is open or closed.
+ * @param {Function} props.setTitle - Function to set the title of the selected word.
+ * @param {Function} props.setWords - Function to set the words of the selected word.
+ * @param {Function} props.onWordSelect - Callback function triggered when a word is selected.
+ * @returns {JSX.Element} The Sidebar component.
+ */
+const Sidebar = ({ isOpen, setTitle, setWords, onWordSelect }) => {
+  const dispatch = useDispatch();
+  const detectedWords = useSelector((state) => state.words.detectedWords);
+  const status = useSelector((state) => state.words.status);
+  const [showMore, setShowMore] = useState({});
+  const [openMenuIndex, setOpenMenuIndex] = useState(null);
+  const [editingWord, setEditingWord] = useState(null);
+  const [newTitle, setNewTitle] = useState("");
+  const menuRef = useRef(null);
+  const modalRef = useRef(null);
+
+  const obj = useSelector((state) => state.auth);
+
+  useEffect(() => {
+    if (obj._id) {
+      dispatch(fetchAllDetectedWords());
+    }
+  }, [obj]);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        menuRef.current &amp;&amp;
+        !menuRef.current.contains(event.target) &amp;&amp;
+        (!modalRef.current || !modalRef.current.contains(event.target))
+      ) {
+        setOpenMenuIndex(null);
+        setEditingWord(null);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [menuRef, modalRef]);
+
+  /**
+   * Groups words by their detection date.
+   * 
+   * @param {Array&lt;Object>} words - The list of detected words.
+   * @returns {Object} An object where keys are dates and values are arrays of words.
+   */
+  const groupByDate = (words) => {
+    return words.reduce((acc, word) => {
+      const date = getRelativeDate(word.createdAt);
+      if (!acc[date]) acc[date] = [];
+      acc[date].push(word);
+      return acc;
+    }, {});
+  };
+
+  /**
+   * Gets a relative date string based on the given date.
+   * 
+   * @param {string} date - The date string to be converted.
+   * @returns {string} A relative date string (e.g., "Today", "Yesterday", "3 days ago").
+   */
+  const getRelativeDate = (date) => {
+    const today = new Date();
+    const targetDate = new Date(date);
+    const diffDays = Math.floor((today - targetDate) / (1000 * 60 * 60 * 24));
+    if (diffDays === 0) return "Today";
+    if (diffDays === 1) return "Yesterday";
+    if (diffDays &lt; 7) return `${diffDays} days ago`;
+    return targetDate.toDateString();
+  };
+
+  const groupedWords = detectedWords ? groupByDate(detectedWords) : {};
+  const pinnedWords = detectedWords
+    ? detectedWords.filter((word) => word.isPinned)
+    : [];
+  const hasPinnedItems = pinnedWords.length > 0;
+  const hasTodayOrYesterday =
+    groupedWords["Today"]?.length > 0 || groupedWords["Yesterday"]?.length > 0;
+
+  const handleShowMore = (date) => {
+    setShowMore((prev) => ({ ...prev, [date]: !prev[date] }));
+  };
+
+  const handleDelete = (wordId) => {
+    dispatch(deleteWord(wordId));
+  };
+
+  const handlePin = (word) => {
+    dispatch(updateWordPinStatus(word));
+  };
+
+  const handleEdit = (word) => {
+    setEditingWord(word);
+    setNewTitle(word.title || word.words.join(", "));
+  };
+
+  const handleSaveEdit = () => {
+    if (newTitle.trim()) {
+      dispatch(updateWordTitle({ id: editingWord._id, title: newTitle }));
+      setTitle(newTitle);
+      setEditingWord(null);
+    }
+  };
+
+   /**
+   * Handles the selection of a word, setting the title and words in the parent component.
+   * 
+   * @param {string} title - The title of the selected word.
+   * @param {Array&lt;string>} words - The list of words in the selected word.
+   * @param {string} date - The creation date of the selected word.
+   */
+  const handleWordItem = (title, words, date) => {
+    onWordSelect(title, words, date); // Notify Dashboard to handle word selection
+  };
+
+  const handleMenuToggle = (id) => {
+    setOpenMenuIndex(openMenuIndex === id ? null : id);
+  };
+
+  /**
+   * Renders a string of words with an ellipsis if the length exceeds 2 words.
+   * 
+   * @param {Array&lt;string>} words - The list of words.
+   * @returns {string} The formatted string with ellipsis if applicable.
+   */
+  const renderWordsWithEllipsis = (words) => {
+    if (words.length > 2) {
+      return `${words.slice(0, 2).join(", ")} ...`;
+    }
+    return words.join(", ");
+  };
+
+  return (
+    &lt;aside
+      className={`fixed top-16 left-0 h-full bg-gray-800 text-white transition-transform transform ${
+        isOpen ? "translate-x-0" : "-translate-x-full"
+      } w-64`}
+    >
+      &lt;div className="p-6">
+        &lt;h2 className="text-center text-2xl">History&lt;/h2>
+        {status === "loading" &amp;&amp; (
+          &lt;div className="flex flex-col gap-4">
+            &lt;div className="skeleton h-32 w-full">&lt;/div>
+            &lt;div className="skeleton h-4 w-28">&lt;/div>
+            &lt;div className="skeleton h-4 w-full">&lt;/div>
+            &lt;div className="skeleton h-4 w-full">&lt;/div>
+          &lt;/div>
+        )}
+        {hasPinnedItems &amp;&amp; (
+          &lt;div>
+            &lt;h2 className="text-lg text-center mt-2 font-bold">Pinned&lt;/h2>
+            &lt;ul>
+              {pinnedWords.map((word, idx) => {
+                const id = `pinned-${word._id}`; // Use word._id for uniqueness
+                return (
+                  &lt;li
+                    key={id}
+                    className="mb-2 flex items-center justify-between relative"
+                  >
+                    &lt;span
+                      onClick={() => handleWordItem(word.title, word.words, word.createdAt)}
+                      className="hover:cursor-pointer"
+                    >
+                      {word.title === ""
+                        ? renderWordsWithEllipsis(word.words)
+                        : word.title}
+                    &lt;/span>
+                    &lt;div className="flex gap-2">
+                      &lt;BsThreeDots
+                        className="cursor-pointer text-xl"
+                        onClick={() => handleMenuToggle(id)}
+                      />
+                      {openMenuIndex === id &amp;&amp; (
+                        &lt;div
+                          ref={menuRef}
+                          className="absolute right-0 top-6 bg-gray-700 text-white rounded-lg shadow-lg flex flex-col p-2 space-y-2 z-10"
+                        >
+                          &lt;div
+                            className="flex items-center gap-4 cursor-pointer p-2 rounded-lg transition-transform transform hover:bg-gray-600 hover:scale-105"
+                            onClick={() => handlePin(word)}
+                          >
+                            &lt;MdLabelImportantOutline className="text-xl text-yellow-600" />
+                            &lt;span className="text-sm">Unpin&lt;/span>
+                          &lt;/div>
+                          &lt;div
+                            className="flex items-center gap-4 cursor-pointer p-2 rounded-lg transition-transform transform hover:bg-gray-600 hover:scale-105"
+                            onClick={() => handleEdit(word)}
+                          >
+                            &lt;FiEdit className="text-xl text-green-400 hover:text-green-300" />
+                            &lt;span className="text-sm">Edit&lt;/span>
+                          &lt;/div>
+                          &lt;div
+                            className="flex items-center gap-4 cursor-pointer p-2 rounded-lg transition-transform transform hover:bg-gray-600 hover:scale-105"
+                            onClick={() => handleDelete(word._id)}
+                          >
+                            &lt;FiTrash className="text-xl text-red-400 hover:text-red-300" />
+                            &lt;span className="text-sm">Delete&lt;/span>
+                          &lt;/div>
+                        &lt;/div>
+                      )}
+                    &lt;/div>
+                  &lt;/li>
+                );
+              })}
+            &lt;/ul>
+          &lt;/div>
+        )}
+
+        {Object.keys(groupedWords).map((date, index) =>
+          date === "Today" ||
+          date === "Yesterday" ||
+          (!hasTodayOrYesterday &amp;&amp; date === "Last 7 Days") ? (
+            &lt;div key={index} className="mt-6">
+              &lt;h2 className="text-lg text-center font-bold">{date}&lt;/h2>
+              &lt;ul>
+                {(showMore[date]
+                  ? groupedWords[date]
+                  : groupedWords[date].slice(0, 5)
+                ).map((word, idx) => {
+                  const id = `unpinned-${date}-${word._id}`; // Use word._id and date for uniqueness
+                  return (
+                    &lt;li
+                      key={id}
+                      className="mb-2 flex items-center justify-between relative"
+                    >
+                      &lt;span
+                        onClick={() => handleWordItem(word.title, word.words, word.createdAt)}
+                        className="hover:cursor-pointer"
+                      >
+                        {word.title === ""
+                          ? renderWordsWithEllipsis(word.words)
+                          : word.title}
+                      &lt;/span>
+                      &lt;div className="flex gap-2">
+                        &lt;BsThreeDots
+                          className="cursor-pointer text-xl"
+                          onClick={() => handleMenuToggle(id)}
+                        />
+                        {openMenuIndex === id &amp;&amp; (
+                          &lt;div
+                            ref={menuRef}
+                            className="absolute right-0 top-6 bg-gray-700 text-white rounded-lg shadow-lg flex flex-col p-2 space-y-2 z-10"
+                          >
+                            &lt;div
+                              className="flex items-center gap-4 cursor-pointer p-2 rounded-lg transition-transform transform hover:bg-gray-600 hover:scale-105"
+                              onClick={() => handlePin(word)}
+                            >
+                              &lt;MdLabelImportantOutline className="text-xl text-yellow-600" />
+                              &lt;span className="text-sm">Pin&lt;/span>
+                            &lt;/div>
+                            &lt;div
+                              className="flex items-center gap-4 cursor-pointer p-2 rounded-lg transition-transform transform hover:bg-gray-600 hover:scale-105"
+                              onClick={() => handleEdit(word)}
+                            >
+                              &lt;FiEdit className="text-xl text-green-400 hover:text-green-300" />
+                              &lt;span className="text-sm">Edit&lt;/span>
+                            &lt;/div>
+                            &lt;div
+                              className="flex items-center gap-4 cursor-pointer p-2 rounded-lg transition-transform transform hover:bg-gray-600 hover:scale-105"
+                              onClick={() => handleDelete(word._id)}
+                            >
+                              &lt;FiTrash className="text-xl text-red-400 hover:text-red-300" />
+                              &lt;span className="text-sm">Delete&lt;/span>
+                            &lt;/div>
+                          &lt;/div>
+                        )}
+                      &lt;/div>
+                    &lt;/li>
+                  );
+                })}
+                {groupedWords[date].length > 5 &amp;&amp; (
+                  &lt;li
+                    className="text-gray-400 cursor-pointer"
+                    onClick={() => handleShowMore(date)}
+                  >
+                    {showMore[date] ? "Show Less" : "Show More"}
+                  &lt;/li>
+                )}
+              &lt;/ul>
+            &lt;/div>
+          ) : null
+        )}
+      &lt;/div>
+
+      {/* Edit Modal */}
+      {editingWord &amp;&amp; (
+        &lt;div className="fixed inset-0 w-screen flex items-start justify-center bg-gray-800 bg-opacity-75 z-50">
+          &lt;div
+            ref={modalRef}
+            className="bg-gray-900 p-8 rounded-lg mt-20 shadow-lg w-2/4 max-w-4xl"
+          >
+            &lt;h3 className="text-lg font-bold text-center">Edit Title&lt;/h3>
+            &lt;input
+              type="text"
+              value={newTitle}
+              onChange={(e) => setNewTitle(e.target.value)}
+              className="bg-gray-600 text-white px-3 py-2 rounded-md mt-4 w-full"
+            />
+            &lt;div className="mt-4 flex justify-end gap-2">
+              &lt;button
+                onClick={handleSaveEdit}
+                className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-400"
+              >
+                Save
+              &lt;/button>
+              &lt;button
+                onClick={() => setEditingWord(null)}
+                className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-400"
+              >
+                Cancel
+              &lt;/button>
+            &lt;/div>
+          &lt;/div>
+        &lt;/div>
+      )}
+    &lt;/aside>
+  );
+};
+
+export default Sidebar;</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#App">App</a></li><li><a href="global.html#AudioRecorder">AudioRecorder</a></li><li><a href="global.html#Dashboard">Dashboard</a></li><li><a href="global.html#Header">Header</a></li><li><a href="global.html#Home">Home</a></li><li><a href="global.html#LoggedInNavbar">LoggedInNavbar</a></li><li><a href="global.html#Login">Login</a></li><li><a href="global.html#Register">Register</a></li><li><a href="global.html#Sidebar">Sidebar</a></li><li><a href="global.html#SingleWord">SingleWord</a></li><li><a href="global.html#deleteWord">deleteWord</a></li><li><a href="global.html#fetchAllDetectedWords">fetchAllDetectedWords</a></li><li><a href="global.html#handleResize">handleResize</a></li><li><a href="global.html#handleWordSelect">handleWordSelect</a></li><li><a href="global.html#loadUserFromLocalStorage">loadUserFromLocalStorage</a></li><li><a href="global.html#login">login</a></li><li><a href="global.html#logout">logout</a></li><li><a href="global.html#sendRecognizedWords">sendRecognizedWords</a></li><li><a href="global.html#signup">signup</a></li><li><a href="global.html#store">store</a></li><li><a href="global.html#toggleSidebar">toggleSidebar</a></li><li><a href="global.html#updateWordPinStatus">updateWordPinStatus</a></li><li><a href="global.html#updateWordTitle">updateWordTitle</a></li><li><a href="global.html#useClickOutside">useClickOutside</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.3</a> on Fri Aug 09 2024 11:00:32 GMT+0530 (India Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

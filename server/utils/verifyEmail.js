@@ -17,9 +17,14 @@ const findCredits = async () => {
         console.error(error);
     }
 }
+// findCredits();
 
-
-
+/**
+ * Verifies the validity of an email address using the ZeroBounce API.
+ * @param {string} email - The email address to validate.
+ * @returns {Promise<string>} The status of the email validation response.
+ * @throws {Error} Throws an error if the email validation fails.
+ */
 export const verifyEmail = async (email) => {
     // console.log(email);
     try {

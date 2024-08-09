@@ -6,6 +6,12 @@ import { useSnackbar } from "notistack";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 
+/**
+ * Register component that allows users to create a new account.
+ *
+ * @component
+ * @returns {JSX.Element} A React component that renders the registration form.
+ */
 const Register = () => {
   const [formData, setFormData] = useState({
     fullName: "",
@@ -19,11 +25,22 @@ const Register = () => {
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
 
+  /**
+   * Handles form field changes and updates the state accordingly.
+   *
+   * @param {React.ChangeEvent<HTMLInputElement>} e - The change event.
+   */
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
+  /**
+   * Handles form submission, validates data, dispatches signup action,
+   * and navigates on success.
+   *
+   * @param {React.FormEvent<HTMLFormElement>} e - The form submission event.
+   */
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (formData.password.length < 6) {

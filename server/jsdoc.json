@@ -1,0 +1,22 @@
+{
+  "source": {
+    "include": [
+      "index.js",
+      "controllers",
+      "routes",
+      "middleware",
+      "utils"
+    ],
+    "exclude": ["node_modules", "public", "dist"]
+  },
+  "opts": {
+    "destination": "docs",
+    "recurse": true,
+    "readme": "README.md"
+  },
+  "templates": {
+    "default": {
+      "outputSourceFiles": true
+    }
+  }
+}

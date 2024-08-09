@@ -7,9 +7,16 @@ import {
 } from "react-router-dom";
 import Home from "./pages/Home";
 import Dashboard from "./pages/Dashboard";
-import Auth from "./components/Auth"; // Import the Auth component
+import Auth from "./components/Auth"; 
 import { useSelector } from "react-redux";
 
+/**
+ * Main application component that sets up the routing.
+ * It renders different pages based on the user's authentication state.
+ * 
+ * @component
+ * @returns {JSX.Element} The rendered application component with routing.
+ */
 const App = () => {
   const obj = useSelector((state) => state.auth);
 

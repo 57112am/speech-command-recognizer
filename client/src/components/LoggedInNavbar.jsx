@@ -4,12 +4,23 @@ import { useNavigate } from "react-router-dom";
 import { logout } from "../redux/authSlice";
 import { useSnackbar } from "notistack";
 
+/**
+ * LoggedInNavbar component displays the navigation bar for logged-in users,
+ * including a profile picture, search bar, and logout functionality.
+ *
+ * @component
+ * @returns {JSX.Element} A React component that renders the logged-in user's navigation bar.
+ */
 const LoggedInNavbar = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
   const user = useSelector((state) => state.auth);
 
+  /**
+   * Handles the logout process, including dispatching the logout action,
+   * removing user information from localStorage, and displaying notifications.
+   */
   const handleLogout = async () => {
     try {
       await dispatch(logout()).unwrap();

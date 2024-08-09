@@ -3,12 +3,16 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 // Initial state
 const initialState = {
   recognizedWords: [],
-  detectedWords: [], // Ensure this is in the initial state
+  detectedWords: [], 
   status: "idle", // can be 'idle', 'loading', 'succeeded', 'failed'
   error: null,
 };
 
-// Thunk to fetch all detected words
+/**
+ * Async thunk to fetch all detected words.
+ * 
+ * @returns {Promise<Array<Object>>} The list of detected words.
+ */
 export const fetchAllDetectedWords = createAsyncThunk(
   "words/fetchAllDetectedWords",
   async (_, { rejectWithValue }) => {
@@ -31,7 +35,12 @@ export const fetchAllDetectedWords = createAsyncThunk(
   }
 );
 
-// Thunk to save recognized words
+/**
+ * Async thunk to send recognized words to the server.
+ * 
+ * @param {Array<Object>} words - The recognized words to save.
+ * @returns {Promise<Object>} The server response.
+ */
 export const sendRecognizedWords = createAsyncThunk(
   "words/sendRecognizedWords",
   async (words, { rejectWithValue }) => {
@@ -58,7 +67,14 @@ export const sendRecognizedWords = createAsyncThunk(
   }
 );
 
-// Thunk to update a word's title
+/**
+ * Async thunk to update the title of a word.
+ * 
+ * @param {Object} param - Contains the word id and new title.
+ * @param {string} param.id - The ID of the word to update.
+ * @param {string} param.title - The new title for the word.
+ * @returns {Promise<Object>} The updated word.
+ */
 export const updateWordTitle = createAsyncThunk(
   "words/updateWordTitle",
   async ({ id, title }, { rejectWithValue }) => {
@@ -85,7 +101,12 @@ export const updateWordTitle = createAsyncThunk(
   }
 );
 
-// Thunk to delete a word
+/**
+ * Async thunk to delete a word.
+ * 
+ * @param {string} wordId - The ID of the word to delete.
+ * @returns {Promise<string>} The ID of the deleted word.
+ */
 export const deleteWord = createAsyncThunk(
   "words/deleteWord",
   async (wordId, { rejectWithValue }) => {
@@ -108,6 +129,14 @@ export const deleteWord = createAsyncThunk(
   }
 );
 
+/**
+ * Async thunk to update a word's pin status.
+ * 
+ * @param {Object} word - The word object to update.
+ * @param {string} word._id - The ID of the word.
+ * @param {boolean} word.isPinned - The current pin status.
+ * @returns {Promise<Object>} The updated word with new pin status.
+ */
 export const updateWordPinStatus = createAsyncThunk(
   "words/updateWordPinStatus",
   async (word, { rejectWithValue }) => {
@@ -139,9 +168,20 @@ const wordsSlice = createSlice({
   name: "words",
   initialState,
   reducers: {
+    /**
+     * Adds a recognized word to the state.
+     * 
+     * @param {Object} state - The current state.
+     * @param {Object} action - The action object.
+     * @param {Object} action.payload - The recognized word to add.
+     */
     addRecognizedWord: (state, action) => {
       state.recognizedWords.push(action.payload);
     },
+
+    /**
+     * Clears all recognized words from the state.
+     */
     clearRecognizedWords: (state) => {
       state.recognizedWords = [];
     },

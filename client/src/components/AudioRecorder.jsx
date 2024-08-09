@@ -5,6 +5,13 @@ import { addRecognizedWord, clearRecognizedWords, fetchAllDetectedWords, sendRec
 import * as tf from "@tensorflow/tfjs";
 import * as speech from '@tensorflow-models/speech-commands';
 
+/**
+ * AudioRecorder component for detecting and recognizing spoken words using TensorFlow.js.
+ * The component uses the `speech-commands` model to recognize words and manage recognized words state.
+ *
+ * @component
+ * @returns {JSX.Element} A React component that renders the audio recording interface.
+ */
 const AudioRecorder = () => {
   const [model, setModel] = useState(null);
   const [labels, setLabels] = useState([]);
@@ -16,6 +23,10 @@ const AudioRecorder = () => {
   const audioContext = new AudioContext({sampleRate: 44100});
   console.log("audiocontext sample rate: ",audioContext.sampleRate);
 
+  /**
+   * Loads the speech recognition model and initializes word labels.
+   * Displays a notification upon successful model loading.
+   */
   const loadModel = async () => {
     const recognizer = await speech.create('BROWSER_FFT');
     console.log('Model Loaded');
@@ -45,10 +56,19 @@ useEffect(() => {
     loadModel();
   }, []);
 
+  /**
+   * Returns the index of the highest value in an array.
+   *
+   * @param {number[]} arr - Array of numbers.
+   * @returns {number} Index of the maximum value.
+   */
   function argMax(arr) {
     return arr.map((x, i) => [x, i]).reduce((r, a) => (a[0] > r[0] ? a : r))[1];
   }
 
+  /**
+   * Starts listening for spoken commands and dispatches recognized words to the Redux store.
+   */
   const startListening = async () => {
     if (model && !isListening) {
       setIsListening(true);
@@ -65,6 +85,10 @@ useEffect(() => {
     }
   };
 
+  /**
+   * Stops listening for spoken commands, sends recognized words to the backend,
+   * and clears the recognized words from the Redux store.
+   */
   const stopListening = async () => {
     if (model && isListening) {
       model.stopListening();

@@ -6,6 +6,12 @@ import { useSnackbar } from "notistack";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 
+/**
+ * Login component that allows users to log in to their account.
+ *
+ * @component
+ * @returns {JSX.Element} A React component that renders the login form.
+ */
 const Login = () => {
   const [formData, setFormData] = useState({
     email: "",
@@ -17,11 +23,21 @@ const Login = () => {
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
 
+  /**
+   * Handles form field changes and updates the state accordingly.
+   *
+   * @param {React.ChangeEvent<HTMLInputElement>} e - The change event.
+   */
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
+  /**
+   * Handles form submission, dispatches login action, and navigates on success.
+   *
+   * @param {React.FormEvent<HTMLFormElement>} e - The form submission event.
+   */
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {

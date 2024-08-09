@@ -1,5 +1,18 @@
 import React from 'react';
 
+/**
+ * SingleWord Component
+ * 
+ * This component displays detected words along with their associated title and creation date.
+ * It also provides a "Back" button to reset the words array.
+ * 
+ * @param {Object} props - The props object.
+ * @param {Array<string>} props.words - The list of detected words.
+ * @param {string} props.title - The title associated with the detected words.
+ * @param {Function} props.setWords - Function to reset the words array.
+ * @param {string} props.date - The date when the words were detected.
+ * @returns {JSX.Element} The SingleWord component.
+ */
 const SingleWord = ({ words, title, setWords, date }) => {
   const handleBackClick = () => {
     setWords([]); // Reset the words array

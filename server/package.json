@@ -21,5 +21,8 @@
     "start": "nodemon index.js"
   },
   "author": "Argha",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "jsdoc": "^4.0.3"
+  }
 }

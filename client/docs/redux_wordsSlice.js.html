@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: redux/wordsSlice.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: redux/wordsSlice.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+
+// Initial state
+const initialState = {
+  recognizedWords: [],
+  detectedWords: [], 
+  status: "idle", // can be 'idle', 'loading', 'succeeded', 'failed'
+  error: null,
+};
+
+/**
+ * Async thunk to fetch all detected words.
+ * 
+ * @returns {Promise&lt;Array&lt;Object>>} The list of detected words.
+ */
+export const fetchAllDetectedWords = createAsyncThunk(
+  "words/fetchAllDetectedWords",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await fetch(
+        "http://localhost:8000/api/words/getAllDetectedWords",
+        {
+          method: "GET",
+          credentials: "include",
+        }
+      );
+      const words = await response.json();
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      return words;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
+/**
+ * Async thunk to send recognized words to the server.
+ * 
+ * @param {Array&lt;Object>} words - The recognized words to save.
+ * @returns {Promise&lt;Object>} The server response.
+ */
+export const sendRecognizedWords = createAsyncThunk(
+  "words/sendRecognizedWords",
+  async (words, { rejectWithValue }) => {
+    try {
+      const response = await fetch(
+        "http://localhost:8000/api/words/saveWords",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ words }),
+          credentials: "include",
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      return await response.json(); // Return response data
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
+/**
+ * Async thunk to update the title of a word.
+ * 
+ * @param {Object} param - Contains the word id and new title.
+ * @param {string} param.id - The ID of the word to update.
+ * @param {string} param.title - The new title for the word.
+ * @returns {Promise&lt;Object>} The updated word.
+ */
+export const updateWordTitle = createAsyncThunk(
+  "words/updateWordTitle",
+  async ({ id, title }, { rejectWithValue }) => {
+    try {
+      const response = await fetch(
+        `http://localhost:8000/api/words/updateWordTitle/${id}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ title }),
+          credentials: "include",
+        }
+      );
+      const updatedWord = await response.json();
+      if (!response.ok) {
+        throw new Error("Failed to update word title");
+      }
+      return updatedWord;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
+/**
+ * Async thunk to delete a word.
+ * 
+ * @param {string} wordId - The ID of the word to delete.
+ * @returns {Promise&lt;string>} The ID of the deleted word.
+ */
+export const deleteWord = createAsyncThunk(
+  "words/deleteWord",
+  async (wordId, { rejectWithValue }) => {
+    try {
+      const response = await fetch(
+        `http://localhost:8000/api/words/deleteAWord/${wordId}`,
+        {
+          method: "DELETE",
+          credentials: "include",
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      return wordId; // Return the ID of the deleted word
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
+/**
+ * Async thunk to update a word's pin status.
+ * 
+ * @param {Object} word - The word object to update.
+ * @param {string} word._id - The ID of the word.
+ * @param {boolean} word.isPinned - The current pin status.
+ * @returns {Promise&lt;Object>} The updated word with new pin status.
+ */
+export const updateWordPinStatus = createAsyncThunk(
+  "words/updateWordPinStatus",
+  async (word, { rejectWithValue }) => {
+    try {
+      const response = await fetch(
+        `http://localhost:8000/api/words/updatePinStatus/${word._id}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ isPinned: !word.isPinned }),
+          credentials: "include",
+        }
+      );
+      const updatedWord = await response.json();
+      if (!response.ok) {
+        throw new Error("Failed to update pin status");
+      }
+      return updatedWord;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
+// Create the slice
+const wordsSlice = createSlice({
+  name: "words",
+  initialState,
+  reducers: {
+    /**
+     * Adds a recognized word to the state.
+     * 
+     * @param {Object} state - The current state.
+     * @param {Object} action - The action object.
+     * @param {Object} action.payload - The recognized word to add.
+     */
+    addRecognizedWord: (state, action) => {
+      state.recognizedWords.push(action.payload);
+    },
+
+    /**
+     * Clears all recognized words from the state.
+     */
+    clearRecognizedWords: (state) => {
+      state.recognizedWords = [];
+    },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(sendRecognizedWords.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(sendRecognizedWords.fulfilled, (state) => {
+        state.status = "succeeded";
+      })
+      .addCase(sendRecognizedWords.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload;
+      })
+      .addCase(fetchAllDetectedWords.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(fetchAllDetectedWords.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.detectedWords = action.payload;
+      })
+      .addCase(fetchAllDetectedWords.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload;
+      })
+      .addCase(deleteWord.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(deleteWord.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        // Remove the deleted word from the detectedWords array
+        state.detectedWords = state.detectedWords.filter(
+          (word) => word._id !== action.payload
+        );
+      })
+      .addCase(deleteWord.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload;
+      })
+      .addCase(updateWordPinStatus.fulfilled, (state, action) => {
+        const index = state.detectedWords.findIndex(word => word._id === action.payload._id);
+        if (index !== -1) {
+          state.detectedWords[index] = action.payload;
+        }
+      })
+      .addCase(updateWordTitle.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(updateWordTitle.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        const index = state.detectedWords.findIndex(word => word._id === action.payload._id);
+        if (index !== -1) {
+          state.detectedWords[index] = action.payload;
+        }
+      })
+      .addCase(updateWordTitle.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload;
+      });
+  },
+});
+
+export const { addRecognizedWord, clearRecognizedWords } = wordsSlice.actions;
+export default wordsSlice.reducer;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#App">App</a></li><li><a href="global.html#AudioRecorder">AudioRecorder</a></li><li><a href="global.html#Dashboard">Dashboard</a></li><li><a href="global.html#Header">Header</a></li><li><a href="global.html#Home">Home</a></li><li><a href="global.html#LoggedInNavbar">LoggedInNavbar</a></li><li><a href="global.html#Login">Login</a></li><li><a href="global.html#Register">Register</a></li><li><a href="global.html#Sidebar">Sidebar</a></li><li><a href="global.html#SingleWord">SingleWord</a></li><li><a href="global.html#deleteWord">deleteWord</a></li><li><a href="global.html#fetchAllDetectedWords">fetchAllDetectedWords</a></li><li><a href="global.html#handleResize">handleResize</a></li><li><a href="global.html#handleWordSelect">handleWordSelect</a></li><li><a href="global.html#loadUserFromLocalStorage">loadUserFromLocalStorage</a></li><li><a href="global.html#login">login</a></li><li><a href="global.html#logout">logout</a></li><li><a href="global.html#sendRecognizedWords">sendRecognizedWords</a></li><li><a href="global.html#signup">signup</a></li><li><a href="global.html#store">store</a></li><li><a href="global.html#toggleSidebar">toggleSidebar</a></li><li><a href="global.html#updateWordPinStatus">updateWordPinStatus</a></li><li><a href="global.html#updateWordTitle">updateWordTitle</a></li><li><a href="global.html#useClickOutside">useClickOutside</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.3</a> on Fri Aug 09 2024 11:00:32 GMT+0530 (India Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

@@ -3,6 +3,18 @@ import Spinner from "../components/Spinner";
 import Header from "../components/Header";
 import { Link } from "react-router-dom";
 
+/**
+ * Home component that serves as the landing page for the application.
+ * It includes a header, a background image, and buttons for login and registration.
+ * 
+ * @component
+ * @example
+ * return (
+ *   <Home />
+ * )
+ * 
+ * @returns {JSX.Element} The rendered home page component.
+ */
 const Home = () => {
   const [loading, setLoading] = useState(false);
 

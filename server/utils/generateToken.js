@@ -1,5 +1,10 @@
 import jwt from "jsonwebtoken";
 
+/**
+ * Generates a JWT token for the user and sets it as an HTTP-only cookie.
+ * @param {string} userId - The ID of the user to include in the token payload.
+ * @param {Response} res - The Express response object to set the cookie on.
+ */
 const generateTokenAndSetCookie = (userId, res) => {
     const token = jwt.sign({ userId }, process.env.JWT_SECRET, {
         expiresIn: "15d",

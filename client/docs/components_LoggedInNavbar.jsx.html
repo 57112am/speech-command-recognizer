@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: components/LoggedInNavbar.jsx</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: components/LoggedInNavbar.jsx</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { logout } from "../redux/authSlice";
+import { useSnackbar } from "notistack";
+
+/**
+ * LoggedInNavbar component displays the navigation bar for logged-in users,
+ * including a profile picture, search bar, and logout functionality.
+ *
+ * @component
+ * @returns {JSX.Element} A React component that renders the logged-in user's navigation bar.
+ */
+const LoggedInNavbar = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { enqueueSnackbar } = useSnackbar();
+  const user = useSelector((state) => state.auth);
+
+  /**
+   * Handles the logout process, including dispatching the logout action,
+   * removing user information from localStorage, and displaying notifications.
+   */
+  const handleLogout = async () => {
+    try {
+      await dispatch(logout()).unwrap();
+      localStorage.removeItem("userInfo");
+      enqueueSnackbar('Successfully logged out', { variant: 'success' });
+      navigate(`/`);
+    } catch (error) {
+      console.error("Logout failed:", error);
+      enqueueSnackbar('Logout failed. Please try again.', { variant: 'error' });
+    }
+  };
+
+  return (
+    &lt;div className="navbar bg-base-100">
+      &lt;div className="flex-1">
+        &lt;a className="btn btn-ghost p-0">
+          &lt;img
+            src="https://www.merillife.com/assets/images/home/new/meril_logo_new.png"
+            alt="home"
+            className="max-w-full max-h-full object-contain"
+          />
+        &lt;/a>
+      &lt;/div>
+      &lt;div className="flex-none gap-2">
+        &lt;div className="form-control">
+          &lt;input
+            type="text"
+            placeholder="Search"
+            className="input input-bordered w-24 md:w-auto"
+          />
+        &lt;/div>
+        &lt;div className="dropdown dropdown-end">
+          &lt;div
+            tabIndex={0}
+            role="button"
+            className="btn btn-ghost btn-circle avatar"
+          >
+            &lt;div className="w-10 rounded-full">
+              &lt;img
+                alt="Tailwind CSS Navbar component"
+                src="https://avatar.iran.liara.run/public/boy"
+              />
+            &lt;/div>
+          &lt;/div>
+          &lt;ul
+            tabIndex={0}
+            className="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow"
+          >
+            &lt;li className="text-center text-xl">
+              &lt;span className="text-center">
+                Hi, {user.fullName}
+              &lt;/span>
+            &lt;/li>
+            &lt;li>
+              &lt;a className="justify-between">
+                Profile
+                &lt;span className="badge">New&lt;/span>
+              &lt;/a>
+            &lt;/li>
+            &lt;li>
+              &lt;a>Settings&lt;/a>
+            &lt;/li>
+            &lt;li>
+              {/* Open the modal using document.getElementById('ID').showModal() method */}
+              &lt;button
+                className="btn hover:bg-red-400 hover:text-white"
+                onClick={() =>
+                  document.getElementById("my_modal_1").showModal()
+                }
+              >
+                Logout
+              &lt;/button>
+              &lt;dialog id="my_modal_1" className="modal fixed inset-0 flex items-center justify-center z-50 p-4">
+                &lt;div className="modal-box border border-gray-300 rounded-lg shadow-lg max-w-sm w-full p-6">
+                  &lt;h3 className="font-bold text-lg">Logging Out?&lt;/h3>
+                  &lt;p className="py-4">
+                    Are you sure you want to logout?
+                  &lt;/p>
+                  &lt;div className="modal-action">
+                    &lt;form method="dialog" className="flex space-x-4">
+                      {/* if there is a button in form, it will close the modal */}
+                      &lt;button className="btn hover:bg-red-400 hover:text-white" onClick={handleLogout}>Logout&lt;/button>
+                      &lt;button className="btn hover:bg-blue-500 hover:text-white">Close&lt;/button>
+                    &lt;/form>
+                  &lt;/div>
+                &lt;/div>
+              &lt;/dialog>
+            &lt;/li>
+          &lt;/ul>
+        &lt;/div>
+      &lt;/div>
+    &lt;/div>
+  );
+};
+
+export default LoggedInNavbar;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#App">App</a></li><li><a href="global.html#AudioRecorder">AudioRecorder</a></li><li><a href="global.html#Dashboard">Dashboard</a></li><li><a href="global.html#Header">Header</a></li><li><a href="global.html#Home">Home</a></li><li><a href="global.html#LoggedInNavbar">LoggedInNavbar</a></li><li><a href="global.html#Login">Login</a></li><li><a href="global.html#Register">Register</a></li><li><a href="global.html#Sidebar">Sidebar</a></li><li><a href="global.html#SingleWord">SingleWord</a></li><li><a href="global.html#deleteWord">deleteWord</a></li><li><a href="global.html#fetchAllDetectedWords">fetchAllDetectedWords</a></li><li><a href="global.html#handleResize">handleResize</a></li><li><a href="global.html#handleWordSelect">handleWordSelect</a></li><li><a href="global.html#loadUserFromLocalStorage">loadUserFromLocalStorage</a></li><li><a href="global.html#login">login</a></li><li><a href="global.html#logout">logout</a></li><li><a href="global.html#sendRecognizedWords">sendRecognizedWords</a></li><li><a href="global.html#signup">signup</a></li><li><a href="global.html#store">store</a></li><li><a href="global.html#toggleSidebar">toggleSidebar</a></li><li><a href="global.html#updateWordPinStatus">updateWordPinStatus</a></li><li><a href="global.html#updateWordTitle">updateWordTitle</a></li><li><a href="global.html#useClickOutside">useClickOutside</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.3</a> on Fri Aug 09 2024 11:00:32 GMT+0530 (India Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

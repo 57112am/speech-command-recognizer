@@ -1,6 +1,10 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
-// Retrieve user information from localStorage
+/**
+ * Retrieves user information from localStorage.
+ * 
+ * @returns {Object} User information including _id, fullName, email, and token.
+ */
 const loadUserFromLocalStorage = () => {
   const userInfo = localStorage.getItem("userInfo");
   if (userInfo) {
@@ -20,6 +24,12 @@ const initialState = {
   error: null,
 };
 
+/**
+ * Async thunk for user signup.
+ * 
+ * @param {Object} userData - The user data for signup.
+ * @returns {Promise<Object>} The user information after signup.
+ */
 export const signup = createAsyncThunk('auth/signup', async (userData) => {
   const response = await fetch('http://localhost:8000/api/auth/signup', { // Update with your API endpoint
     method: 'POST',
@@ -35,6 +45,12 @@ export const signup = createAsyncThunk('auth/signup', async (userData) => {
   return data;
 });
 
+/**
+ * Async thunk for user login.
+ * 
+ * @param {Object} userData - The user data for login.
+ * @returns {Promise<Object>} The user information after login.
+ */
 export const login = createAsyncThunk('auth/login', async (userData) => {
   const response = await fetch('http://localhost:8000/api/auth/login', { 
     method: 'POST',
@@ -50,6 +66,11 @@ export const login = createAsyncThunk('auth/login', async (userData) => {
   return data;
 });
 
+/**
+ * Async thunk for user logout.
+ * 
+ * @returns {Promise<void>} Resolves when the user has been logged out.
+ */
 export const logout = createAsyncThunk('auth/logout', async () => {
   const response = await fetch('http://localhost:8000/api/auth/logout', {
     method: 'POST',
@@ -66,6 +87,9 @@ const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
+    /**
+     * Clears the user information from state and localStorage.
+     */
     clearUser: (state) => {
       state._id = '';
       state.fullName = '';
@@ -110,7 +134,7 @@ const authSlice = createSlice({
         state.status = 'loading';
       })
       .addCase(logout.fulfilled, (state) => {
-        state.status = 'idle'; // or 'succeeded', depending on your needs
+        state.status = 'idle'; 
         state._id = '';
         state.fullName = '';
         state.email = '';

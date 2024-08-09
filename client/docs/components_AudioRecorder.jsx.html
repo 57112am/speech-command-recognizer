@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: components/AudioRecorder.jsx</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: components/AudioRecorder.jsx</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useSnackbar } from 'notistack';
+import { addRecognizedWord, clearRecognizedWords, fetchAllDetectedWords, sendRecognizedWords } from '../redux/wordsSlice';
+import * as tf from "@tensorflow/tfjs";
+import * as speech from '@tensorflow-models/speech-commands';
+
+/**
+ * AudioRecorder component for detecting and recognizing spoken words using TensorFlow.js.
+ * The component uses the `speech-commands` model to recognize words and manage recognized words state.
+ *
+ * @component
+ * @returns {JSX.Element} A React component that renders the audio recording interface.
+ */
+const AudioRecorder = () => {
+  const [model, setModel] = useState(null);
+  const [labels, setLabels] = useState([]);
+  const [isListening, setIsListening] = useState(false);
+  const [currentWord, setCurrentWord] = useState(null);
+  const dispatch = useDispatch();
+  const { recognizedWords, status } = useSelector((state) => state.words);
+  const { enqueueSnackbar } = useSnackbar();
+  const audioContext = new AudioContext({sampleRate: 44100});
+  console.log("audiocontext sample rate: ",audioContext.sampleRate);
+
+  /**
+   * Loads the speech recognition model and initializes word labels.
+   * Displays a notification upon successful model loading.
+   */
+  const loadModel = async () => {
+    const recognizer = await speech.create('BROWSER_FFT');
+    console.log('Model Loaded');
+    await recognizer.ensureModelLoaded();
+    enqueueSnackbar('Model loaded successfully', { variant: 'success' });
+    const wordLabels = recognizer.wordLabels();
+    setModel(recognizer);
+    setLabels(wordLabels);
+  };
+
+
+async function testAudioContext() {
+  try {
+    const oscillator = audioContext.createOscillator();
+    oscillator.connect(audioContext.destination);
+    oscillator.start();
+    await new Promise(resolve => setTimeout(resolve, 1000)); // Play for 1 second
+    oscillator.stop();
+    console.log('AudioContext test passed');
+  } catch (error) {
+    console.error('AudioContext test failed:', error);
+  }
+}
+
+useEffect(() => {
+    testAudioContext();
+    loadModel();
+  }, []);
+
+  /**
+   * Returns the index of the highest value in an array.
+   *
+   * @param {number[]} arr - Array of numbers.
+   * @returns {number} Index of the maximum value.
+   */
+  function argMax(arr) {
+    return arr.map((x, i) => [x, i]).reduce((r, a) => (a[0] > r[0] ? a : r))[1];
+  }
+
+  /**
+   * Starts listening for spoken commands and dispatches recognized words to the Redux store.
+   */
+  const startListening = async () => {
+    if (model &amp;&amp; !isListening) {
+      setIsListening(true);
+      console.log('Listening for commands');
+      model.listen(
+        (result) => {
+          console.log(result.spectrogram);
+          const detectedAction = labels[argMax(Object.values(result.scores))];
+          setCurrentWord(detectedAction);
+          dispatch(addRecognizedWord(detectedAction));
+        },
+        { includeSpectrogram: true, probabilityThreshold: 0.9 }
+      );
+    }
+  };
+
+  /**
+   * Stops listening for spoken commands, sends recognized words to the backend,
+   * and clears the recognized words from the Redux store.
+   */
+  const stopListening = async () => {
+    if (model &amp;&amp; isListening) {
+      model.stopListening();
+      setIsListening(false);
+      console.log('Stopped listening');
+
+      // Send the recognized words to the backend
+      if (recognizedWords.length > 0) {
+        const action = await dispatch(sendRecognizedWords(recognizedWords));
+        if (sendRecognizedWords.fulfilled.match(action)) {
+          enqueueSnackbar('Words saved successfully', { variant: 'success' });
+        } else {
+          enqueueSnackbar('Failed to save words', { variant: 'error' });
+        }
+      }
+      dispatch(fetchAllDetectedWords());
+      dispatch(clearRecognizedWords());
+      setCurrentWord(null);
+    }
+  };
+
+  return (
+    &lt;div className="App flex flex-col items-center justify-center min-h-screen bg-gray-100">
+      &lt;header className="App-header text-center">
+        &lt;button
+          onClick={startListening}
+          disabled={isListening}
+          className="px-4 py-2 mb-2 bg-green-500 text-white rounded shadow hover:bg-green-600 disabled:bg-gray-400"
+        >
+          Start Listening
+        &lt;/button>
+        &lt;button
+          onClick={stopListening}
+          disabled={!isListening}
+          className="px-4 py-2 mb-2 bg-red-500 text-white rounded shadow hover:bg-red-600 disabled:bg-gray-400"
+        >
+          Stop Listening
+        &lt;/button>
+        &lt;div
+          className={`w-16 h-16 rounded-full mb-4 ${
+            isListening ? 'bg-green-500' : 'bg-red-500'
+          }`}
+        >&lt;/div>
+        &lt;div className="text-lg mb-4">
+          {isListening ? 'Listening...' : 'Ready'}
+        &lt;/div>
+        &lt;div className="w-full max-w-3xl mx-auto p-4 bg-white rounded shadow">
+          &lt;h2 className="text-xl font-bold mb-2">Recognized Words&lt;/h2>
+          &lt;div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {labels.map((label, index) => (
+              &lt;div
+                key={index}
+                className={`p-4 rounded text-black font-bold text-center ${
+                  currentWord === label
+                    ? 'bg-yellow-300 animate-blink'
+                    : 'bg-gray-300 hover:bg-gray-100'
+                }`}
+              >
+                {label}
+              &lt;/div>
+            ))}
+          &lt;/div>
+        &lt;/div>
+      &lt;/header>
+    &lt;/div>
+  );
+};
+
+export default AudioRecorder;</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#App">App</a></li><li><a href="global.html#AudioRecorder">AudioRecorder</a></li><li><a href="global.html#Dashboard">Dashboard</a></li><li><a href="global.html#Header">Header</a></li><li><a href="global.html#Home">Home</a></li><li><a href="global.html#LoggedInNavbar">LoggedInNavbar</a></li><li><a href="global.html#Login">Login</a></li><li><a href="global.html#Register">Register</a></li><li><a href="global.html#Sidebar">Sidebar</a></li><li><a href="global.html#SingleWord">SingleWord</a></li><li><a href="global.html#deleteWord">deleteWord</a></li><li><a href="global.html#fetchAllDetectedWords">fetchAllDetectedWords</a></li><li><a href="global.html#handleResize">handleResize</a></li><li><a href="global.html#handleWordSelect">handleWordSelect</a></li><li><a href="global.html#loadUserFromLocalStorage">loadUserFromLocalStorage</a></li><li><a href="global.html#login">login</a></li><li><a href="global.html#logout">logout</a></li><li><a href="global.html#sendRecognizedWords">sendRecognizedWords</a></li><li><a href="global.html#signup">signup</a></li><li><a href="global.html#store">store</a></li><li><a href="global.html#toggleSidebar">toggleSidebar</a></li><li><a href="global.html#updateWordPinStatus">updateWordPinStatus</a></li><li><a href="global.html#updateWordTitle">updateWordTitle</a></li><li><a href="global.html#useClickOutside">useClickOutside</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.3</a> on Fri Aug 09 2024 11:00:32 GMT+0530 (India Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

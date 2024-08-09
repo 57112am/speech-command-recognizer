@@ -3,6 +3,13 @@ import { Link } from "react-router-dom";
 import { FaBars, FaChevronDown } from "react-icons/fa";
 import useClickOutside from "./useClickOutside";
 
+/**
+ * Header component that displays the navigation bar with dropdown menus
+ * and a hamburger menu for mobile screens.
+ *
+ * @component
+ * @returns {JSX.Element} A React component that renders the header with navigation links and dropdown menus.
+ */
 const Header = () => {
   const [dropdown, setDropdown] = useState(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -13,6 +20,11 @@ const Header = () => {
     resources: useRef(null),
   };
 
+  /**
+   * Toggles the dropdown menu for the specified menu item.
+   *
+   * @param {string} menu - The menu item to toggle ("product", "company", "resources").
+   */
   const handleDropdownToggle = (menu) => {
     setDropdown(dropdown === menu ? null : menu);
   };
