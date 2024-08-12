@@ -229,7 +229,8 @@ const Sidebar = ({ isOpen, setTitle, setWords, onWordSelect }) => {
         {Object.keys(groupedWords).map((date, index) =>
           date === "Today" ||
           date === "Yesterday" ||
-          (!hasTodayOrYesterday && date === "Last 7 Days") ? (
+          !hasTodayOrYesterday ||
+  date.includes("days ago") ? (
             <div key={index} className="mt-6">
               <h2 className="text-lg text-center font-bold">{date}</h2>
               <ul>

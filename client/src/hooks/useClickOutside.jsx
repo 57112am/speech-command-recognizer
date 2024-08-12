@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 
 /**
  * A custom React hook that triggers a callback when a click occurs outside the specified element.

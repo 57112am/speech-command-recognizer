@@ -1,7 +1,7 @@
 import React, { useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import { FaBars, FaChevronDown } from "react-icons/fa";
-import useClickOutside from "./useClickOutside";
+import useClickOutside from "../hooks/useClickOutside";
 
 /**
  * Header component that displays the navigation bar with dropdown menus
