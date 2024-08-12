@@ -80,7 +80,7 @@ const Register = () => {
       transition={{ duration: 0.5 }}
     >
       <button
-        onClick={() => navigate('/')}
+        onClick={() => navigate("/")}
         className="mb-4 text-blue-600 hover:underline"
       >
         &lt; Back to Home
@@ -144,7 +144,6 @@ const Register = () => {
         <Link
           to="/auth?type=login"
           className="block text-sm text-center text-blue-600 hover:underline"
-          
         >
           Already have an account? Login
         </Link>

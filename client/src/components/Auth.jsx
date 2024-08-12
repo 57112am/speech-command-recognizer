@@ -9,8 +9,8 @@ const Auth = () => {
 
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
-    const type = queryParams.get('type');
-    setIsRegister(type === 'register');
+    const type = queryParams.get("type");
+    setIsRegister(type === "register");
   }, [location]);
 
   return (

@@ -3,14 +3,14 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 // Initial state
 const initialState = {
   recognizedWords: [],
-  detectedWords: [], 
+  detectedWords: [],
   status: "idle", // can be 'idle', 'loading', 'succeeded', 'failed'
   error: null,
 };
 
 /**
  * Async thunk to fetch all detected words.
- * 
+ *
  * @returns {Promise<Array<Object>>} The list of detected words.
  */
 export const fetchAllDetectedWords = createAsyncThunk(
@@ -37,7 +37,7 @@ export const fetchAllDetectedWords = createAsyncThunk(
 
 /**
  * Async thunk to send recognized words to the server.
- * 
+ *
  * @param {Array<Object>} words - The recognized words to save.
  * @returns {Promise<Object>} The server response.
  */
@@ -69,7 +69,7 @@ export const sendRecognizedWords = createAsyncThunk(
 
 /**
  * Async thunk to update the title of a word.
- * 
+ *
  * @param {Object} param - Contains the word id and new title.
  * @param {string} param.id - The ID of the word to update.
  * @param {string} param.title - The new title for the word.
@@ -103,7 +103,7 @@ export const updateWordTitle = createAsyncThunk(
 
 /**
  * Async thunk to delete a word.
- * 
+ *
  * @param {string} wordId - The ID of the word to delete.
  * @returns {Promise<string>} The ID of the deleted word.
  */
@@ -131,7 +131,7 @@ export const deleteWord = createAsyncThunk(
 
 /**
  * Async thunk to update a word's pin status.
- * 
+ *
  * @param {Object} word - The word object to update.
  * @param {string} word._id - The ID of the word.
  * @param {boolean} word.isPinned - The current pin status.
@@ -170,7 +170,7 @@ const wordsSlice = createSlice({
   reducers: {
     /**
      * Adds a recognized word to the state.
-     * 
+     *
      * @param {Object} state - The current state.
      * @param {Object} action - The action object.
      * @param {Object} action.payload - The recognized word to add.
@@ -224,7 +224,9 @@ const wordsSlice = createSlice({
         state.error = action.payload;
       })
       .addCase(updateWordPinStatus.fulfilled, (state, action) => {
-        const index = state.detectedWords.findIndex(word => word._id === action.payload._id);
+        const index = state.detectedWords.findIndex(
+          (word) => word._id === action.payload._id
+        );
         if (index !== -1) {
           state.detectedWords[index] = action.payload;
         }
@@ -234,7 +236,9 @@ const wordsSlice = createSlice({
       })
       .addCase(updateWordTitle.fulfilled, (state, action) => {
         state.status = "succeeded";
-        const index = state.detectedWords.findIndex(word => word._id === action.payload._id);
+        const index = state.detectedWords.findIndex(
+          (word) => word._id === action.payload._id
+        );
         if (index !== -1) {
           state.detectedWords[index] = action.payload;
         }

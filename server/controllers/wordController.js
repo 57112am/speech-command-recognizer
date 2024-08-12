@@ -103,10 +103,12 @@ export const getAllDetectedWords = async (req, res) => {
     const userId = req.user._id;
 
     // const user = await User.findById(userId).populate("detectedWords").exec();
-    const user = await User.findById(userId).populate({
-      path: "detectedWords",
-      options: { sort: { 'createdAt': -1 } } // Assuming 'createdAt' is the field indicating when a word was detected
-    }).exec();
+    const user = await User.findById(userId)
+      .populate({
+        path: "detectedWords",
+        options: { sort: { createdAt: -1 } }, // Assuming 'createdAt' is the field indicating when a word was detected
+      })
+      .exec();
 
     if (!user) {
       return res.status(404).json({ error: "User not found" });
@@ -213,24 +215,24 @@ export const updatePinStatus = async (req, res) => {
   try {
     const { id } = req.params;
     const { isPinned } = req.body;
-    
+
     const updatedWord = await DetectedWords.findByIdAndUpdate(
-        id,
-        { isPinned },
-        { new: true }
+      id,
+      { isPinned },
+      { new: true }
     );
-    
+
     if (!updatedWord) {
-        return res.status(404).json({ error: "Word not found" });
+      return res.status(404).json({ error: "Word not found" });
     }
-    
+
     // console.log(updatedWord);
     res.status(200).json(updatedWord);
   } catch (error) {
     console.error("Error in updatePinStatus controller:", error.message);
     res.status(500).json({ error: "Internal Server Error" });
   }
-}
+};
 
 /**
  * @swagger
@@ -265,13 +267,17 @@ export const updatePinStatus = async (req, res) => {
  *       500:
  *         description: Internal server error
  */
-export const updateTitle =  async (req, res) => {
+export const updateTitle = async (req, res) => {
   const { id } = req.params;
   const { title } = req.body;
 
   try {
     // Find and update the word's title in the database
-    const updatedWord = await DetectedWords.findByIdAndUpdate(id, { title }, { new: true });
+    const updatedWord = await DetectedWords.findByIdAndUpdate(
+      id,
+      { title },
+      { new: true }
+    );
     if (!updatedWord) {
       return res.status(404).json({ message: "Word not found" });
     }
@@ -279,4 +285,4 @@ export const updateTitle =  async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
-}
+};

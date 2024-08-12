@@ -12,10 +12,10 @@ import { BsThreeDots } from "react-icons/bs";
 
 /**
  * Sidebar Component
- * 
+ *
  * This component renders a sidebar that lists detected words, allows for word management actions like pinning, editing, and deleting,
  * and groups words by their detection date. It also provides a modal for editing word titles.
- * 
+ *
  * @param {Object} props - The props object.
  * @param {boolean} props.isOpen - Indicates whether the sidebar is open or closed.
  * @param {Function} props.setTitle - Function to set the title of the selected word.
@@ -60,7 +60,7 @@ const Sidebar = ({ isOpen, setTitle, setWords, onWordSelect }) => {
 
   /**
    * Groups words by their detection date.
-   * 
+   *
    * @param {Array<Object>} words - The list of detected words.
    * @returns {Object} An object where keys are dates and values are arrays of words.
    */
@@ -75,7 +75,7 @@ const Sidebar = ({ isOpen, setTitle, setWords, onWordSelect }) => {
 
   /**
    * Gets a relative date string based on the given date.
-   * 
+   *
    * @param {string} date - The date string to be converted.
    * @returns {string} A relative date string (e.g., "Today", "Yesterday", "3 days ago").
    */
@@ -122,9 +122,9 @@ const Sidebar = ({ isOpen, setTitle, setWords, onWordSelect }) => {
     }
   };
 
-   /**
+  /**
    * Handles the selection of a word, setting the title and words in the parent component.
-   * 
+   *
    * @param {string} title - The title of the selected word.
    * @param {Array<string>} words - The list of words in the selected word.
    * @param {string} date - The creation date of the selected word.
@@ -139,7 +139,7 @@ const Sidebar = ({ isOpen, setTitle, setWords, onWordSelect }) => {
 
   /**
    * Renders a string of words with an ellipsis if the length exceeds 2 words.
-   * 
+   *
    * @param {Array<string>} words - The list of words.
    * @returns {string} The formatted string with ellipsis if applicable.
    */
@@ -178,7 +178,9 @@ const Sidebar = ({ isOpen, setTitle, setWords, onWordSelect }) => {
                     className="mb-2 flex items-center justify-between relative"
                   >
                     <span
-                      onClick={() => handleWordItem(word.title, word.words, word.createdAt)}
+                      onClick={() =>
+                        handleWordItem(word.title, word.words, word.createdAt)
+                      }
                       className="hover:cursor-pointer"
                     >
                       {word.title === ""
@@ -230,7 +232,7 @@ const Sidebar = ({ isOpen, setTitle, setWords, onWordSelect }) => {
           date === "Today" ||
           date === "Yesterday" ||
           !hasTodayOrYesterday ||
-  date.includes("days ago") ? (
+          date.includes("days ago") ? (
             <div key={index} className="mt-6">
               <h2 className="text-lg text-center font-bold">{date}</h2>
               <ul>
@@ -245,7 +247,9 @@ const Sidebar = ({ isOpen, setTitle, setWords, onWordSelect }) => {
                       className="mb-2 flex items-center justify-between relative"
                     >
                       <span
-                        onClick={() => handleWordItem(word.title, word.words, word.createdAt)}
+                        onClick={() =>
+                          handleWordItem(word.title, word.words, word.createdAt)
+                        }
                         className="hover:cursor-pointer"
                       >
                         {word.title === ""

@@ -1,9 +1,14 @@
-import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { useSnackbar } from 'notistack';
-import { addRecognizedWord, clearRecognizedWords, fetchAllDetectedWords, sendRecognizedWords } from '../redux/wordsSlice';
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useSnackbar } from "notistack";
+import {
+  addRecognizedWord,
+  clearRecognizedWords,
+  fetchAllDetectedWords,
+  sendRecognizedWords,
+} from "../redux/wordsSlice";
 import * as tf from "@tensorflow/tfjs";
-import * as speech from '@tensorflow-models/speech-commands';
+import * as speech from "@tensorflow-models/speech-commands";
 
 /**
  * AudioRecorder component for detecting and recognizing spoken words using TensorFlow.js.
@@ -20,38 +25,37 @@ const AudioRecorder = () => {
   const dispatch = useDispatch();
   const { recognizedWords, status } = useSelector((state) => state.words);
   const { enqueueSnackbar } = useSnackbar();
-  const audioContext = new AudioContext({sampleRate: 44100});
-  console.log("audiocontext sample rate: ",audioContext.sampleRate);
+  const audioContext = new AudioContext({ sampleRate: 44100 });
+  console.log("audiocontext sample rate: ", audioContext.sampleRate);
 
   /**
    * Loads the speech recognition model and initializes word labels.
    * Displays a notification upon successful model loading.
    */
   const loadModel = async () => {
-    const recognizer = await speech.create('BROWSER_FFT');
-    console.log('Model Loaded');
+    const recognizer = await speech.create("BROWSER_FFT");
+    console.log("Model Loaded");
     await recognizer.ensureModelLoaded();
-    enqueueSnackbar('Model loaded successfully', { variant: 'success' });
+    enqueueSnackbar("Model loaded successfully", { variant: "success" });
     const wordLabels = recognizer.wordLabels();
     setModel(recognizer);
     setLabels(wordLabels);
   };
 
-
-async function testAudioContext() {
-  try {
-    const oscillator = audioContext.createOscillator();
-    oscillator.connect(audioContext.destination);
-    oscillator.start();
-    await new Promise(resolve => setTimeout(resolve, 1000)); // Play for 1 second
-    oscillator.stop();
-    console.log('AudioContext test passed');
-  } catch (error) {
-    console.error('AudioContext test failed:', error);
+  async function testAudioContext() {
+    try {
+      const oscillator = audioContext.createOscillator();
+      oscillator.connect(audioContext.destination);
+      oscillator.start();
+      await new Promise((resolve) => setTimeout(resolve, 1000)); // Play for 1 second
+      oscillator.stop();
+      console.log("AudioContext test passed");
+    } catch (error) {
+      console.error("AudioContext test failed:", error);
+    }
   }
-}
 
-useEffect(() => {
+  useEffect(() => {
     testAudioContext();
     loadModel();
   }, []);
@@ -72,7 +76,7 @@ useEffect(() => {
   const startListening = async () => {
     if (model && !isListening) {
       setIsListening(true);
-      console.log('Listening for commands');
+      console.log("Listening for commands");
       model.listen(
         (result) => {
           console.log(result.spectrogram);
@@ -93,15 +97,15 @@ useEffect(() => {
     if (model && isListening) {
       model.stopListening();
       setIsListening(false);
-      console.log('Stopped listening');
+      console.log("Stopped listening");
 
       // Send the recognized words to the backend
       if (recognizedWords.length > 0) {
         const action = await dispatch(sendRecognizedWords(recognizedWords));
         if (sendRecognizedWords.fulfilled.match(action)) {
-          enqueueSnackbar('Words saved successfully', { variant: 'success' });
+          enqueueSnackbar("Words saved successfully", { variant: "success" });
         } else {
-          enqueueSnackbar('Failed to save words', { variant: 'error' });
+          enqueueSnackbar("Failed to save words", { variant: "error" });
         }
       }
       dispatch(fetchAllDetectedWords());
@@ -129,11 +133,11 @@ useEffect(() => {
         </button>
         <div
           className={`w-16 h-16 rounded-full mb-4 ${
-            isListening ? 'bg-green-500' : 'bg-red-500'
+            isListening ? "bg-green-500" : "bg-red-500"
           }`}
         ></div>
         <div className="text-lg mb-4">
-          {isListening ? 'Listening...' : 'Ready'}
+          {isListening ? "Listening..." : "Ready"}
         </div>
         <div className="w-full max-w-3xl mx-auto p-4 bg-white rounded shadow">
           <h2 className="text-xl font-bold mb-2">Recognized Words</h2>
@@ -143,8 +147,8 @@ useEffect(() => {
                 key={index}
                 className={`p-4 rounded text-black font-bold text-center ${
                   currentWord === label
-                    ? 'bg-yellow-300 animate-blink'
-                    : 'bg-gray-300 hover:bg-gray-100'
+                    ? "bg-yellow-300 animate-blink"
+                    : "bg-gray-300 hover:bg-gray-100"
                 }`}
               >
                 {label}

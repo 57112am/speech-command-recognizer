@@ -2,14 +2,14 @@
  * @fileoverview Main entry point for the backend server.
  * @module index
  */
-import express from 'express';
-import dotenv from 'dotenv';
-import cookieParser from 'cookie-parser';
-import authRoutes from './routes/authRoutes.js';
-import wordRoutes from './routes/wordRoutes.js';
-import connectToMongodb from './db/connectToMongodb.js';
-import cors from 'cors';
-import setupSwagger from './swagger.js';
+import express from "express";
+import dotenv from "dotenv";
+import cookieParser from "cookie-parser";
+import authRoutes from "./routes/authRoutes.js";
+import wordRoutes from "./routes/wordRoutes.js";
+import connectToMongodb from "./db/connectToMongodb.js";
+import cors from "cors";
+import setupSwagger from "./swagger.js";
 
 const app = express();
 
@@ -28,10 +28,12 @@ const port = process.env.PORT || 8000;
  * Configures CORS to allow requests from the frontend application.
  * @type {cors.CorsOptions}
  */
-app.use(cors({
-    origin: 'http://localhost:5173', // frontend URL
+app.use(
+  cors({
+    origin: "http://localhost:5173", // frontend URL
     credentials: true, // for sending cookies
-  }));
+  })
+);
 
 /**
  * Middleware to parse JSON request bodies.
@@ -53,19 +55,19 @@ setupSwagger(app);
  * Route handlers for authentication-related API endpoints.
  * @type {express.Router}
  */
-app.use('/api/auth', authRoutes);
+app.use("/api/auth", authRoutes);
 
 /**
  * Route handlers for word-related API endpoints.
  * @type {express.Router}
  */
-app.use('/api/words', wordRoutes);
+app.use("/api/words", wordRoutes);
 
 /**
  * Starts the Express server and connects to MongoDB.
  * @param {number} port - The port number on which the server will listen.
  */
 app.listen(port, () => {
-    connectToMongodb();
-    console.log(`Server is listening on port: ${port}`);
-})
+  connectToMongodb();
+  console.log(`Server is listening on port: ${port}`);
+});

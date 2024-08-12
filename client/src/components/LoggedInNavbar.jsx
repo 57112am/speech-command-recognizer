@@ -25,11 +25,11 @@ const LoggedInNavbar = () => {
     try {
       await dispatch(logout()).unwrap();
       localStorage.removeItem("userInfo");
-      enqueueSnackbar('Successfully logged out', { variant: 'success' });
+      enqueueSnackbar("Successfully logged out", { variant: "success" });
       navigate(`/`);
     } catch (error) {
       console.error("Logout failed:", error);
-      enqueueSnackbar('Logout failed. Please try again.', { variant: 'error' });
+      enqueueSnackbar("Logout failed. Please try again.", { variant: "error" });
     }
   };
 
@@ -70,9 +70,7 @@ const LoggedInNavbar = () => {
             className="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow"
           >
             <li className="text-center text-xl">
-              <span className="text-center">
-                Hi, {user.fullName}
-              </span>
+              <span className="text-center">Hi, {user.fullName}</span>
             </li>
             <li>
               <a className="justify-between">
@@ -93,17 +91,25 @@ const LoggedInNavbar = () => {
               >
                 Logout
               </button>
-              <dialog id="my_modal_1" className="modal fixed inset-0 flex items-center justify-center z-50 p-4">
+              <dialog
+                id="my_modal_1"
+                className="modal fixed inset-0 flex items-center justify-center z-50 p-4"
+              >
                 <div className="modal-box border border-gray-300 rounded-lg shadow-lg max-w-sm w-full p-6">
                   <h3 className="font-bold text-lg">Logging Out?</h3>
-                  <p className="py-4">
-                    Are you sure you want to logout?
-                  </p>
+                  <p className="py-4">Are you sure you want to logout?</p>
                   <div className="modal-action">
                     <form method="dialog" className="flex space-x-4">
                       {/* if there is a button in form, it will close the modal */}
-                      <button className="btn hover:bg-red-400 hover:text-white" onClick={handleLogout}>Logout</button>
-                      <button className="btn hover:bg-blue-500 hover:text-white">Close</button>
+                      <button
+                        className="btn hover:bg-red-400 hover:text-white"
+                        onClick={handleLogout}
+                      >
+                        Logout
+                      </button>
+                      <button className="btn hover:bg-blue-500 hover:text-white">
+                        Close
+                      </button>
                     </form>
                   </div>
                 </div>

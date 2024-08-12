@@ -48,8 +48,8 @@ const Header = () => {
 
       {/* Desktop Navigation */}
       <nav className="hidden md:flex space-x-8">
-        <div className="flex-grow"></div> {/* Empty flex-grow div to push items to the right */}
-
+        <div className="flex-grow"></div>{" "}
+        {/* Empty flex-grow div to push items to the right */}
         {/* Product Dropdown */}
         <div className="relative" ref={dropdownRefs.product}>
           <button
@@ -57,23 +57,35 @@ const Header = () => {
             onClick={() => handleDropdownToggle("product")}
           >
             <span>Product</span>
-            <FaChevronDown className={`transition-transform ${dropdown === "product" ? "rotate-180" : ""}`} />
+            <FaChevronDown
+              className={`transition-transform ${
+                dropdown === "product" ? "rotate-180" : ""
+              }`}
+            />
           </button>
           {dropdown === "product" && (
             <div className="absolute left-0 mt-2 w-48 bg-white rounded-lg shadow-lg z-40">
-              <Link to="/product1" className="block px-4 py-2 text-black hover:bg-gray-100">
+              <Link
+                to="/product1"
+                className="block px-4 py-2 text-black hover:bg-gray-100"
+              >
                 Product 1
               </Link>
-              <Link to="/product2" className="block px-4 py-2 text-black hover:bg-gray-100">
+              <Link
+                to="/product2"
+                className="block px-4 py-2 text-black hover:bg-gray-100"
+              >
                 Product 2
               </Link>
-              <Link to="/product3" className="block px-4 py-2 text-black hover:bg-gray-100">
+              <Link
+                to="/product3"
+                className="block px-4 py-2 text-black hover:bg-gray-100"
+              >
                 Product 3
               </Link>
             </div>
           )}
         </div>
-
         {/* Company Dropdown */}
         <div className="relative" ref={dropdownRefs.company}>
           <button
@@ -81,23 +93,35 @@ const Header = () => {
             onClick={() => handleDropdownToggle("company")}
           >
             <span>Company</span>
-            <FaChevronDown className={`transition-transform ${dropdown === "company" ? "rotate-180" : ""}`} />
+            <FaChevronDown
+              className={`transition-transform ${
+                dropdown === "company" ? "rotate-180" : ""
+              }`}
+            />
           </button>
           {dropdown === "company" && (
             <div className="absolute left-0 mt-2 w-48 bg-white rounded-lg shadow-lg z-40">
-              <Link to="/company1" className="block px-4 py-2 text-black hover:bg-gray-100">
+              <Link
+                to="/company1"
+                className="block px-4 py-2 text-black hover:bg-gray-100"
+              >
                 Company 1
               </Link>
-              <Link to="/company2" className="block px-4 py-2 text-black hover:bg-gray-100">
+              <Link
+                to="/company2"
+                className="block px-4 py-2 text-black hover:bg-gray-100"
+              >
                 Company 2
               </Link>
-              <Link to="/company3" className="block px-4 py-2 text-black hover:bg-gray-100">
+              <Link
+                to="/company3"
+                className="block px-4 py-2 text-black hover:bg-gray-100"
+              >
                 Company 3
               </Link>
             </div>
           )}
         </div>
-
         {/* Resources Dropdown */}
         <div className="relative" ref={dropdownRefs.resources}>
           <button
@@ -105,24 +129,39 @@ const Header = () => {
             onClick={() => handleDropdownToggle("resources")}
           >
             <span>Resources</span>
-            <FaChevronDown className={`transition-transform ${dropdown === "resources" ? "rotate-180" : ""}`} />
+            <FaChevronDown
+              className={`transition-transform ${
+                dropdown === "resources" ? "rotate-180" : ""
+              }`}
+            />
           </button>
           {dropdown === "resources" && (
             <div className="absolute left-0 mt-2 w-48 bg-white rounded-lg shadow-lg z-40">
-              <Link to="/resource1" className="block px-4 py-2 text-black hover:bg-gray-100">
+              <Link
+                to="/resource1"
+                className="block px-4 py-2 text-black hover:bg-gray-100"
+              >
                 Resource 1
               </Link>
-              <Link to="/resource2" className="block px-4 py-2 text-black hover:bg-gray-100">
+              <Link
+                to="/resource2"
+                className="block px-4 py-2 text-black hover:bg-gray-100"
+              >
                 Resource 2
               </Link>
-              <Link to="/resource3" className="block px-4 py-2 text-black hover:bg-gray-100">
+              <Link
+                to="/resource3"
+                className="block px-4 py-2 text-black hover:bg-gray-100"
+              >
                 Resource 3
               </Link>
             </div>
           )}
         </div>
-
-        <Link to="/contact-sales" className="text-white hover:text-gray-300 transition-colors duration-300">
+        <Link
+          to="/contact-sales"
+          className="text-white hover:text-gray-300 transition-colors duration-300"
+        >
           Contact Sales
         </Link>
       </nav>
@@ -138,9 +177,14 @@ const Header = () => {
       {/* Mobile Menu Overlay */}
       {isMenuOpen && (
         <>
-          <div className="fixed inset-0 bg-black opacity-50 z-40" onClick={() => setIsMenuOpen(false)}></div>
           <div
-            className={`fixed top-0 right-0 w-full h-full bg-gray-800 p-6 transition-transform duration-300 ease-in-out ${isMenuOpen ? "translate-x-0" : "translate-x-full"} z-50`}
+            className="fixed inset-0 bg-black opacity-50 z-40"
+            onClick={() => setIsMenuOpen(false)}
+          ></div>
+          <div
+            className={`fixed top-0 right-0 w-full h-full bg-gray-800 p-6 transition-transform duration-300 ease-in-out ${
+              isMenuOpen ? "translate-x-0" : "translate-x-full"
+            } z-50`}
             ref={dropdownRefs.menu}
           >
             <button

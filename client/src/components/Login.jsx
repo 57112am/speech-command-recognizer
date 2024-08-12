@@ -57,8 +57,8 @@ const Login = () => {
       animate={{ opacity: 1, x: 0 }}
       transition={{ duration: 0.5 }}
     >
-		<button
-        onClick={() => navigate('/')}
+      <button
+        onClick={() => navigate("/")}
         className="mb-4 text-blue-600 hover:underline"
       >
         &lt; Back to Home
@@ -96,7 +96,6 @@ const Login = () => {
         <Link
           to="/auth?type=register"
           className="block text-sm text-center text-blue-600 hover:underline"
-          
         >
           Don't have an account? Register Yourself
         </Link>

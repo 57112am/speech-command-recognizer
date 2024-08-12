@@ -2,9 +2,15 @@
  * @module routes/words
  */
 
-import express from 'express';
-import { deleteAWord, getAllDetectedWords, saveWords, updatePinStatus, updateTitle } from '../controllers/wordController.js';
-import protectRoute from '../middleware/protectRoute.js';
+import express from "express";
+import {
+  deleteAWord,
+  getAllDetectedWords,
+  saveWords,
+  updatePinStatus,
+  updateTitle,
+} from "../controllers/wordController.js";
+import protectRoute from "../middleware/protectRoute.js";
 
 const router = express.Router();
 
@@ -14,7 +20,7 @@ const router = express.Router();
  * @access Private
  * @middleware protectRoute
  */
-router.post('/saveWords', protectRoute, saveWords);
+router.post("/saveWords", protectRoute, saveWords);
 
 /**
  * @route GET /getAllDetectedWords
@@ -22,7 +28,7 @@ router.post('/saveWords', protectRoute, saveWords);
  * @access Private
  * @middleware protectRoute
  */
-router.get('/getAllDetectedWords', protectRoute, getAllDetectedWords);
+router.get("/getAllDetectedWords", protectRoute, getAllDetectedWords);
 
 /**
  * @route DELETE /deleteAWord/:id
@@ -31,7 +37,7 @@ router.get('/getAllDetectedWords', protectRoute, getAllDetectedWords);
  * @middleware protectRoute
  * @param {string} id - The ID of the word to delete.
  */
-router.delete('/deleteAWord/:id', protectRoute, deleteAWord);
+router.delete("/deleteAWord/:id", protectRoute, deleteAWord);
 
 /**
  * @route PATCH /updatePinStatus/:id
@@ -40,7 +46,7 @@ router.delete('/deleteAWord/:id', protectRoute, deleteAWord);
  * @middleware protectRoute
  * @param {string} id - The ID of the word to update.
  */
-router.patch('/updatePinStatus/:id', protectRoute, updatePinStatus);
+router.patch("/updatePinStatus/:id", protectRoute, updatePinStatus);
 
 /**
  * @route PATCH /updateWordTitle/:id
@@ -49,6 +55,6 @@ router.patch('/updatePinStatus/:id', protectRoute, updatePinStatus);
  * @middleware protectRoute
  * @param {string} id - The ID of the word to update.
  */
-router.patch('/updateWordTitle/:id',protectRoute, updateTitle);
+router.patch("/updateWordTitle/:id", protectRoute, updateTitle);
 
 export default router;
